@@ -1,0 +1,7 @@
+<Solution>
+  <Project Path="NairaLedger.Application/NairaLedger.Application.csproj" Id="3e930df8-fd8b-4ea2-a495-f53e0b6c303a" />
+  <Project Path="NairaLedger.Domain/NairaLedger.Domain.csproj" Id="a23bdca6-1790-4e3f-bc20-362a46698778" />
+  <Project Path="NairaLedger.Infrastructure/NairaLedger.Infrastructure.csproj" Id="9c77f663-de90-4d9f-8b64-bbee21dc4fb6" />
+  <Project Path="NairaLedger.Tests/NairaLedger.Tests.csproj" Id="8d9e8f48-9bb1-491e-aa2e-653851d0235c" />
+  <Project Path="NairaLedger.WebApi/NairaLedger.WebApi.csproj" Id="59a5ac05-980d-4ea5-8005-5fae7aa36ca6" />
+</Solution>
