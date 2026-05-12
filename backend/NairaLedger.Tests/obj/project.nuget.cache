@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "8VuNB1+IOpI=",
+  "dgSpecHash": "N8NJ0dSbE8Y=",
   "success": true,
   "projectFilePath": "C:\\Users\\MoneyMagnet\\source\\repos\\naira-ledger-engine\\backend\\NairaLedger.Tests\\NairaLedger.Tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\MoneyMagnet\\.nuget\\packages\\coverlet.collector\\6.0.4\\coverlet.collector.6.0.4.nupkg.sha512",
+    "C:\\Users\\MoneyMagnet\\.nuget\\packages\\fluentassertions\\8.10.0\\fluentassertions.8.10.0.nupkg.sha512",
     "C:\\Users\\MoneyMagnet\\.nuget\\packages\\microsoft.codecoverage\\17.14.1\\microsoft.codecoverage.17.14.1.nupkg.sha512",
     "C:\\Users\\MoneyMagnet\\.nuget\\packages\\microsoft.net.test.sdk\\17.14.1\\microsoft.net.test.sdk.17.14.1.nupkg.sha512",
     "C:\\Users\\MoneyMagnet\\.nuget\\packages\\microsoft.testplatform.objectmodel\\17.14.1\\microsoft.testplatform.objectmodel.17.14.1.nupkg.sha512",
