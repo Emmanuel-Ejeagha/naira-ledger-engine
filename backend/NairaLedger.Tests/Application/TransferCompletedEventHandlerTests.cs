@@ -3,8 +3,8 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using NairaLedger.Application.Commands;
 using NairaLedger.Application.Commands.EventHandlers;
+using NairaLedger.Application.EventHandlers;
 using NairaLedger.Domain.DomianEvents;
-using NairaWallet.Application.EventHandlers;
 
 namespace NairaWallet.Tests.Application;
 

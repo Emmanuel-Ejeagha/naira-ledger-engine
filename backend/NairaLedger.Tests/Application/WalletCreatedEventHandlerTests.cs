@@ -2,9 +2,9 @@
 using Moq;
 using NairaLedger.Application.Commands;
 using NairaLedger.Application.Commands.EventHandlers;
+using NairaLedger.Application.EventHandlers;
 using NairaLedger.Domain.DomianEvents;
 using NairaLedger.Domain.ValueObjects;
-using NairaWallet.Application.EventHandlers;
 
 namespace NairaLedger.Tests.Application;
 
