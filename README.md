@@ -62,8 +62,8 @@ All decisions are documented in [`docs/adr/`](docs/adr/):
 - **Reversal window** of 30 minutes from transaction creation.
 
 ---
-```
 ## 🧱 Project Structure (so far)
+```
 naira-ledger-engine/
 ├── backend/
 │ ├── NairaWallet.sln
