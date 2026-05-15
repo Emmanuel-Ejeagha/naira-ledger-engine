@@ -11,7 +11,15 @@ public interface ITransactionRepository
     /// </summary>
     /// <param name="transactionId">The unique identifier of the transaction.</param>
     /// <returns>The transaction with the specified ID, or null if not found.</returns>
-    Task<Transaction?> GetByIdAsync(Guid transactionId, CancellationToken cancellationToken);
+    Task<Transaction?> GetByIdAsync(Guid transactionId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Retrieves a transaction with all its ledger entries
+    /// </summary>
+    /// <param name="transactionId">The unique identifier of the transaction.</param>
+    /// <param name="cancellationToken">A token to cancel the operation.</param>
+    /// <returns>Returns the Id with entries</returns>
+    Task<Transaction?> GetByIdWithEntriesAsync(Guid  transactionId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Persists a new transaction.
