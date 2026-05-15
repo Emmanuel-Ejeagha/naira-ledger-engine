@@ -2,11 +2,6 @@
 
 A production‑grade, double‑entry digital wallet and ledger API for the Nigerian market (NGN). Built with .NET 10, Clean Architecture, and financial‑first design principles.
 
----
-
-![CI](https://github.com/your-org/naira-ledger-engine/actions/workflows/dotnet.yml/badge.svg)
-
----
 
 ## 🧭 Overview
 
@@ -67,7 +62,7 @@ All decisions are documented in [`docs/adr/`](docs/adr/):
 - **Reversal window** of 30 minutes from transaction creation.
 
 ---
-
+```
 ## 🧱 Project Structure (so far)
 naira-ledger-engine/
 ├── backend/
@@ -103,7 +98,7 @@ naira-ledger-engine/
 ├── .github/workflows/dotnet.yml # ✅ CI pipeline
 └── README.md
 
-text
+```
 
 ---
 
