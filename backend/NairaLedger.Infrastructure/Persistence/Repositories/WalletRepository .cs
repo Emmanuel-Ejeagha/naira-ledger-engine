@@ -3,9 +3,6 @@ using NairaLedger.Application.Interfaces;
 using NairaLedger.Domain.Aggregates;
 using NairaLedger.Domain.Interfaces;
 using NairaLedger.Domain.ValueObjects;
-using NairaLedger.Infrastructure.Identity;
-using NairaLedger.Infrastructure.Persistence;
-using NairaWallet.Application.Interfaces;
 
 namespace NairaLedger.Infrastructure.Persistence.Repositories;
 

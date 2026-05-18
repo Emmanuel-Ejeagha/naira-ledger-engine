@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace NairaWallet.Application.Queries.GetWalletBalance;
+namespace NairaLedger.Application.Queries.GetWalletBalance;
 
 /// <summary>
 /// Retrieves the current balance of a wallet.

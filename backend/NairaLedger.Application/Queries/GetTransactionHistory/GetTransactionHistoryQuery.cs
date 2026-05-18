@@ -1,7 +1,7 @@
 ﻿using MediatR;
-using NairaWallet.Application.DTOs;
+using NairaLedger.Application.DTOs;
 
-namespace NairaWallet.Application.Queries.GetTransactionHistory;
+namespace NairaLedger.Application.Queries.GetTransactionHistory;
 
 /// <summary>
 /// Retrieves a paginated list of transactions for a wallet, sorted by creation time descending.

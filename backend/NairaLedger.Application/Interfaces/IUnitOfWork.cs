@@ -1,4 +1,4 @@
-﻿namespace NairaWallet.Application.Interfaces;
+﻿namespace NairaLedger.Application.Interfaces;
 
 /// <summary>
 /// Abstraction for transactional persistence across multiple repositories.

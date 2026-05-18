@@ -1,9 +1,9 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
+using NairaLedger.Application.Interfaces;
 using NairaLedger.Domain.Aggregates;
 using NairaLedger.Domain.Interfaces;
 using NairaLedger.Domain.ValueObjects;
-using NairaWallet.Application.Interfaces;
 
 namespace NairaLedger.Application.Commands.CreateWallet;
 

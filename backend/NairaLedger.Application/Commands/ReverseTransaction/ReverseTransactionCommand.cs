@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace NairaWallet.Application.Commands.ReverseTransaction;
+namespace NairaLedger.Application.Commands.ReverseTransaction;
 
 /// <summary>
 /// Reverses a completed transaction within the 30‑minute window.

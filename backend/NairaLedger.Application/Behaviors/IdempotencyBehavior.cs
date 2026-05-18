@@ -1,9 +1,9 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using NairaLedger.Application.Commands;
-using NairaWallet.Application.Interfaces;
+using NairaLedger.Application.Interfaces;
 
-namespace NairaWallet.Application.Behaviors;
+namespace NairaLedger.Application.Behaviors;
 
 /// <summary>
 /// Ensures idempotency for commands implementing IIdempotentCommand.

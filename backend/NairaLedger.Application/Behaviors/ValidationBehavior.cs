@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using MediatR;
 
-namespace NairaWallet.Application.Behaviors;
+namespace NairaLedger.Application.Behaviors;
 
 /// <summary>
 /// Automatically validates every request that has a corresponding validator.

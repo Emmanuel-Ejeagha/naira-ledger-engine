@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using NairaLedger.Application.Commands;
 using NairaLedger.Domain.DomianEvents;
-using NairaWallet.Application.Interfaces;
 
 namespace NairaLedger.Application.EventHandlers;
 

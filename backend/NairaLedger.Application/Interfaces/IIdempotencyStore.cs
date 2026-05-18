@@ -1,6 +1,6 @@
 ﻿using NairaLedger.Domain.ValueObjects;
 
-namespace NairaWallet.Application.Interfaces;
+namespace NairaLedger.Application.Interfaces;
 
 /// <summary>
 /// Persistence abstraction for idempotency records.

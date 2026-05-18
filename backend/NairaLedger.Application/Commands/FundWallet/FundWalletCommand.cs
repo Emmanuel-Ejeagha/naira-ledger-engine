@@ -2,7 +2,7 @@
 using NairaLedger.Application.Commands;
 using NairaLedger.Domain.ValueObjects;
 
-namespace NairaWallet.Application.Commands.FundWallet;
+namespace NairaLedger.Application.Commands.FundWallet;
 
 /// <summary>
 /// Credits a wallet (e.g., after successful Paystack webhook).

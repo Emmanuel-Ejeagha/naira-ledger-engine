@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
-using NairaWallet.Application.Interfaces;
+using NairaLedger.Application.Interfaces;
 
 namespace NairaLedger.Infrastructure.Persistence;
 
