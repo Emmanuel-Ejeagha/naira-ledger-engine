@@ -5,7 +5,6 @@ using NairaLedger.Domain.ValueObjects;
 
 namespace NairaLedger.Infrastructure.Persistence.Repositories;
 
-/// <inheritdoc />
 public class TransactionRepository : ITransactionRepository
 {
     private readonly NairaLedgerDbContext _context;

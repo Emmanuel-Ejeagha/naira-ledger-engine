@@ -1,4 +1,4 @@
-﻿namespace NairaWallet.Application.DTOs;
+﻿namespace NairaLedger.Application.DTOs;
 
 /// <summary>
 /// Lightweight transaction representation for queries.

@@ -1,6 +1,7 @@
-﻿using NairaWallet.Application.DTOs;
+﻿
+using NairaLedger.Application.DTOs;
 
-namespace NairaWallet.Application.Interfaces;
+namespace NairaLedger.Application.Interfaces;
 
 /// <summary>
 /// Read‑only transaction query service.
