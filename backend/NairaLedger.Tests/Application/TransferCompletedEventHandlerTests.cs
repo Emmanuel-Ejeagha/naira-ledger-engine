@@ -1,11 +1,10 @@
-﻿using FluentAssertions;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Moq;
 using NairaLedger.Application.Commands;
 using NairaLedger.Application.EventHandlers;
 using NairaLedger.Domain.DomianEvents;
 
-namespace NairaWallet.Tests.Application;
+namespace NairaLedger.Tests.Application;
 
 /// <summary>
 /// Tests the TransferCompletedEventHandler notification flow.

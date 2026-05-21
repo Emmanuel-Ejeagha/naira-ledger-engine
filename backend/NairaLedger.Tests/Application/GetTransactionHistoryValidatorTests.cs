@@ -1,8 +1,7 @@
-﻿using FluentAssertions;
-using FluentValidation.TestHelper;
-using NairaWallet.Application.Queries.GetTransactionHistory;
+﻿using FluentValidation.TestHelper;
+using NairaLedger.Application.Queries.GetTransactionHistory;
 
-namespace NairaWallet.Tests.Application;
+namespace NairaLedger.Tests.Application;
 
 /// <summary>
 /// Tests the GetTransactionHistoryValidator rules.
