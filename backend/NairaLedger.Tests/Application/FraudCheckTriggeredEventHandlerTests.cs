@@ -2,11 +2,10 @@
 using Microsoft.Extensions.Logging;
 using Moq;
 using NairaLedger.Application.EventHandlers;
+using NairaLedger.Application.Interfaces;
 using NairaLedger.Domain.DomianEvents;
-using NairaWallet.Application.EventHandlers;
-using NairaWallet.Application.Interfaces;
 
-namespace NairaWallet.Tests.Application;
+namespace NairaLedger.Tests.Application;
 
 /// <summary>
 /// Tests the FraudCheckTriggeredEventHandler escalation and logging.
