@@ -8,7 +8,7 @@ namespace NairaLedger.Application.Extensions;
 /// <summary>
 /// Registers all Application layer dependencies (MediatR, validators, pipeline behaviors).
 /// </summary>
-public static class ServiceCollectionExtensions
+public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
