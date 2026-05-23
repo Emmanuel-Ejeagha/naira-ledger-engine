@@ -1,4 +1,4 @@
-﻿namespace NairaWallet.Application.Interfaces;
+﻿namespace NairaLedger.Application.Interfaces;
 
 /// <summary>
 /// Persists refresh tokens for token rotation and revocation.

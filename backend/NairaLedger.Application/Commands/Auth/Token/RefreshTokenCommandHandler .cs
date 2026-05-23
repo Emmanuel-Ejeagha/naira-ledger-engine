@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using NairaLedger.Application.Interfaces;
-using NairaWallet.Application.Interfaces;
 using System.Security.Claims;
 
 namespace NairaLedger.Application.Commands.Auth.Token;
