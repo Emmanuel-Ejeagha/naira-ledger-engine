@@ -13,9 +13,6 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["NairaLedger.WebApi/NairaLedger.WebApi.csproj", "NairaLedger.WebApi/"]
-COPY ["NairaLedger.Application/NairaLedger.Application.csproj", "NairaLedger.Application/"]
-COPY ["NairaLedger.Domain/NairaLedger.Domain.csproj", "NairaLedger.Domain/"]
-COPY ["NairaLedger.Infrastructure/NairaLedger.Infrastructure.csproj", "NairaLedger.Infrastructure/"]
 RUN dotnet restore "./NairaLedger.WebApi/NairaLedger.WebApi.csproj"
 COPY . .
 WORKDIR "/src/NairaLedger.WebApi"
