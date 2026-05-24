@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NairaLedger.Application.Behaviors;
 using System.Reflection;
 
-namespace NairaLedger.Application.Extensions;
+namespace NairaLedger.Application;
 
 /// <summary>
 /// Registers all Application layer dependencies (MediatR, validators, pipeline behaviors).
