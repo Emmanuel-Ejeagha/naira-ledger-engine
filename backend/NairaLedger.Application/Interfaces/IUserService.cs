@@ -25,6 +25,8 @@ public interface IUserService
     /// Retrieves minimal user information by ID.
     /// </summary>
     Task<UserDto?> GetByIdAsync(Guid userId, CancellationToken cancellationToken = default);
+
+    Task VerifyEmailAsync(string email, string token, CancellationToken cancellationToken = default);
 }
 
 /// <summary>

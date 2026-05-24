@@ -1,5 +1,5 @@
 ﻿using StackExchange.Redis;
-using NairaWallet.Application.Interfaces;
+using NairaLedger.Application.Interfaces;
 
 namespace NairaLedger.Infrastructure.Services;
 

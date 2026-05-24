@@ -4,16 +4,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using NairaLedger.Application.Interfaces;
 using NairaLedger.Domain.Interfaces;
-using NairaLedger.Infrastructure.HealthChecks;
 using NairaLedger.Infrastructure.Identity;
 using NairaLedger.Infrastructure.Outbox;
 using NairaLedger.Infrastructure.Persistence;
 using NairaLedger.Infrastructure.Persistence.Repositories;
 using NairaLedger.Infrastructure.Services;
-using NairaWallet.Application.Interfaces;
 using StackExchange.Redis;
 
 namespace NairaLedger.Infrastructure;
@@ -25,6 +22,7 @@ public static class DependencyInjection
         var connectionString = configuration.GetConnectionString("DefaultConnection")
             ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
+        // Database
         services.AddDbContext<NairaLedgerDbContext>(options =>
             options.UseNpgsql(connectionString));
 
@@ -53,46 +51,40 @@ public static class DependencyInjection
         // Repositories
         services.AddScoped<IWalletRepository, WalletRepository>();
         services.AddScoped<ITransactionRepository, TransactionRepository>();
-
-        // Unit of Work
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
-        // Services
+        // Core services
         services.AddScoped<IIdempotencyStore, IdempotencyStore>();
         services.AddScoped<ILedgerQueryService, LedgerQueryService>();
         services.AddScoped<ITransactionQueryService, TransactionQueryService>();
         services.AddScoped<IFraudEscalationService, FraudDetectionService>();
-        services.Configure<SmtpSettings>(configuration.GetSection("Smtp"));
         services.AddScoped<IEmailService, EmailService>();
-        services.AddScoped<IPaystackService>(sp =>
+        services.AddScoped<IUserWalletResolver, WalletRepository>();
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<INotificationService, NotificationService>();
+
+        // Settings
+        services.Configure<PaystackSettings>(configuration.GetSection("Paystack"));
+
+        // Paystack webhook service (HttpClient)
+        services.AddHttpClient<IPaystackService, PaystackService>(client =>
         {
-            var secretKey = configuration["Paystack:SecretKey"] ?? "";
-            var resolver = sp.GetRequiredService<IUserWalletResolver>();
-            var logger = sp.GetRequiredService<ILogger<PaystackService>>();
-            return new PaystackService(secretKey, resolver, logger);
+            client.BaseAddress = new Uri("https://api.paystack.co");
         });
-        services.AddNairaLedgerHealthChecks(connectionString, redisConnection);
-        // JWT
+
+        // Paystack payment gateway (HttpClient)
+        services.AddHttpClient<IPaymentGateway, PaystackPaymentGateway>();
+
+        // JWT & refresh tokens
         services.Configure<JwtSettings>(configuration.GetSection("Jwt"));
         services.AddScoped<ITokenService, JwtTokenService>();
         services.AddScoped<IRefreshTokenStore, RedisRefreshTokenStore>();
-        services.AddScoped<IIdempotencyStore, IdempotencyStore>();
-        services.AddScoped<IUserService, UserService>();
 
-
-
-
-
-
-        // Outbox job
+        // Outbox publisher
         services.AddScoped<OutboxPublisherJob>();
 
-        services.AddHealthChecks()
-           .AddNpgSql(connectionString, name: "PostgreSQL")
-           .AddRedis(redisConnection, name: "Redis");
-
+        // SMTP
         services.Configure<SmtpSettings>(configuration.GetSection("Smtp"));
-
 
         return services;
     }

@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
-using NairaLedger.Application.Commands;
+using NairaLedger.Application.Interfaces;
 using NairaLedger.Domain.DomianEvents;
 
 namespace NairaLedger.Application.EventHandlers;

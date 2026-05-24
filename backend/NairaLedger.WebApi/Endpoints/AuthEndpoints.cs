@@ -9,22 +9,40 @@ public static class AuthEndpoints
 {
     public static void MapAuthEndpoints(this WebApplication app)
     {
-        app.MapPost("/api/v1/auth/register", async (RegisterUserCommand command, IMediator mediator) =>
-        {
-            var result = await mediator.Send(command);
-            return Results.Ok(result);
-        }).RequireRateLimiting("strict");
+        var authGroup = app.MapGroup("/api/v1/auth")
+            .WithTags("Authentication");
 
-        app.MapPost("/api/v1/auth/login", async (LoginUserCommand command, IMediator mediator) =>
+        authGroup.MapPost("/register", async (RegisterUserCommand command, IMediator mediator) =>
         {
             var result = await mediator.Send(command);
             return Results.Ok(result);
-        }).RequireRateLimiting("strict");
+        })
+        .WithSummary("Register a new user")
+        .WithDescription("Creates a new user account and automatically provisions a wallet. Returns user ID and wallet ID.")
+        .Produces<RegisterUserResponse>(200)
+        .ProducesProblem(400)
+        .RequireRateLimiting("strict");
 
-        app.MapPost("/api/v1/auth/refresh", async (RefreshTokenCommand command, IMediator mediator) =>
+        authGroup.MapPost("/login", async (LoginUserCommand command, IMediator mediator) =>
         {
             var result = await mediator.Send(command);
             return Results.Ok(result);
-        }).RequireRateLimiting("strict");
+        })
+        .WithSummary("User login")
+        .WithDescription("Authenticates a user and returns a JWT access token and a refresh token.")
+        .Produces<LoginUserResponse>(200)
+        .ProducesProblem(401)
+        .RequireRateLimiting("strict");
+
+        authGroup.MapPost("/refresh", async (RefreshTokenCommand command, IMediator mediator) =>
+        {
+            var result = await mediator.Send(command);
+            return Results.Ok(result);
+        })
+        .WithSummary("Refresh access token")
+        .WithDescription("Uses a valid refresh token to obtain a new access token. The old refresh token is revoked.")
+        .Produces<LoginUserResponse>(200)
+        .ProducesProblem(401)
+        .RequireRateLimiting("strict");
     }
-}       
+}

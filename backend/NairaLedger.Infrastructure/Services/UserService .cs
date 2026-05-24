@@ -60,4 +60,15 @@ public class UserService : IUserService
         if (!result.Succeeded)
             throw new InvalidOperationException("Invalid email or password.");
     }
+    public async Task VerifyEmailAsync(string email, string token, CancellationToken cancellationToken)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user is null) throw new InvalidOperationException("User not found.");
+        var result = await _userManager.ConfirmEmailAsync(user, token);
+        if (!result.Succeeded)
+        {
+            var errors = string.Join("; ", result.Errors.Select(e => e.Description));
+            throw new InvalidOperationException($"Email verification failed: {errors}");
+        }
+    }
 }

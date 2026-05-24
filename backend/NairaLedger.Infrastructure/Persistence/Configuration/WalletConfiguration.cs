@@ -32,7 +32,7 @@ internal class WalletConfiguration : IEntityTypeConfiguration<Wallet>
 
         builder.Property(w => w.Version)
             .IsConcurrencyToken()
-            .ValueGeneratedOnAddOrUpdate();
+            .ValueGeneratedNever();
 
         builder.Ignore(w => w.DomainEvents);
     }

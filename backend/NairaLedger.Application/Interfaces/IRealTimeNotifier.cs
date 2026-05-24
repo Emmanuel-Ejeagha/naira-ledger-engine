@@ -1,4 +1,4 @@
-﻿namespace NairaWallet.Application.Interfaces;
+﻿namespace NairaLedger.Application.Interfaces;
 
 /// <summary>
 /// Abstraction for sending real‑time messages to users, decoupling Infrastructure from SignalR.
