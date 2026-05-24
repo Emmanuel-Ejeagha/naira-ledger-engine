@@ -1,8 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using NairaLedger.Application.Interfaces;
+﻿using NairaLedger.Application.Interfaces;
 using NairaLedger.Domain.ValueObjects;
 using NairaLedger.Infrastructure.Persistence;
-using NairaWallet.Application.Interfaces;
 using StackExchange.Redis;
 using System.Text.Json;
 
