@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-
-namespace NairaLedger.WebApi.Authorization;
+﻿namespace NairaLedger.WebApi.Authorization;
 
 public static class Policies
 {

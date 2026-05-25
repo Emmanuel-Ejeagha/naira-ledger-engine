@@ -1,7 +1,4 @@
-﻿using System.Net;
-using System.Text.Json;
-
-namespace NairaLedger.WebApi.Middleware;
+﻿namespace NairaLedger.WebApi.Middleware;
 
 public class ExceptionHandlingMiddleware
 {

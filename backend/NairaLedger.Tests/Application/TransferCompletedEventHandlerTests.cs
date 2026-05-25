@@ -1,10 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Moq;
-using NairaLedger.Application.Commands;
-using NairaLedger.Application.EventHandlers;
-using NairaLedger.Domain.DomianEvents;
-
-namespace NairaLedger.Tests.Application;
+﻿namespace NairaLedger.Tests.Application;
 
 /// <summary>
 /// Tests the TransferCompletedEventHandler notification flow.
@@ -16,8 +10,10 @@ public class TransferCompletedEventHandlerTests
     {
         // Arrange
         var mockNotification = new Mock<INotificationService>();
+        var mockEmail = new Mock<IEmailService>();
+        var mockWallet = new Mock<IWalletRepository>();
         var mockLogger = new Mock<ILogger<TransferCompletedEventHandler>>();
-        var handler = new TransferCompletedEventHandler(mockNotification.Object, mockLogger.Object);
+        var handler = new TransferCompletedEventHandler(mockNotification.Object, mockEmail.Object, mockWallet.Object, mockLogger.Object);
 
         var fromWallet = Guid.NewGuid();
         var toWallet = Guid.NewGuid();

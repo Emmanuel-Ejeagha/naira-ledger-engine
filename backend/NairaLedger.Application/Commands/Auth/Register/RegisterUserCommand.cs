@@ -1,6 +1,4 @@
-﻿using MediatR;
-
-namespace NairaLedger.Application.Commands.Auth.Register;
+﻿namespace NairaLedger.Application.Commands.Auth.Register;
 
 /// <summary>
 /// Registers a new user and creates a wallet.

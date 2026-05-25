@@ -1,10 +1,4 @@
-﻿using NairaLedger.Application.Interfaces;
-using NairaLedger.Domain.ValueObjects;
-using NairaLedger.Infrastructure.Persistence;
-using StackExchange.Redis;
-using System.Text.Json;
-
-namespace NairaLedger.Infrastructure.Services;
+﻿namespace NairaLedger.Infrastructure.Services;
 
 public class IdempotencyStore : IIdempotencyStore
 {

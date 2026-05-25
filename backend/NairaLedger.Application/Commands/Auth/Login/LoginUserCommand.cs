@@ -1,6 +1,4 @@
-﻿using MediatR;
-
-namespace NairaLedger.Application.Commands.Auth;
+﻿namespace NairaLedger.Application.Commands.Auth;
 
 public record LoginUserCommand(string Email, string Password) : IRequest<LoginUserResponse>;
 

@@ -1,6 +1,4 @@
-﻿using FluentValidation;
-
-namespace NairaLedger.Application.Commands.Kyc;
+﻿namespace NairaLedger.Application.Commands.Kyc;
 
 public class SubmitKycValidator : AbstractValidator<SubmitKycCommand>
 {

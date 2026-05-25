@@ -1,7 +1,4 @@
-﻿using FluentAssertions;
-using NairaLedger.Domain.ValueObjects;
-
-namespace NairaLedger.Tests.Domain;
+﻿namespace NairaLedger.Tests.Domain;
 
 public class TransactionReferenceTests
 {

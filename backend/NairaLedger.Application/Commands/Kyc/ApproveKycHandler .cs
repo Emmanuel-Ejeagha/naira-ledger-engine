@@ -1,8 +1,4 @@
-﻿using MediatR;
-using NairaLedger.Application.Interfaces;
-using NairaLedger.Domain.Interfaces;
-
-namespace NairaLedger.Application.Commands.Kyc;
+﻿namespace NairaLedger.Application.Commands.Kyc;
 
 public class ApproveKycHandler : IRequestHandler<ApproveKycCommand, Unit>
 {

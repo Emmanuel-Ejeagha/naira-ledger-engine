@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using NairaLedger.Application.Behaviors;
 using System.Reflection;
 

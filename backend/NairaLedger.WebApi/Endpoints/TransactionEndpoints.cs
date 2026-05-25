@@ -1,9 +1,4 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using NairaLedger.Application.DTOs;
-using NairaLedger.Application.Queries.GetTransactionHistory;
-
-namespace NairaLedger.WebApi.Endpoints;
+﻿namespace NairaLedger.WebApi.Endpoints;
 
 public static class TransactionEndpoints
 {

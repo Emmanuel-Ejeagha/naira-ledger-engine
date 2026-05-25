@@ -1,12 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using NairaLedger.Application.Interfaces;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-
-namespace NairaLedger.Infrastructure.Services;
+﻿namespace NairaLedger.Infrastructure.Services;
 
 public class JwtTokenService : ITokenService
 {

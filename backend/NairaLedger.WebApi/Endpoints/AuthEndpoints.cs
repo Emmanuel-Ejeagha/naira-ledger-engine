@@ -1,9 +1,4 @@
-﻿using MediatR;
-using NairaLedger.Application.Commands.Auth;
-using NairaLedger.Application.Commands.Auth.Register;
-using NairaLedger.Application.Commands.Auth.Token;
-
-namespace NairaLedger.WebApi.Endpoints;
+﻿namespace NairaLedger.WebApi.Endpoints;
 
 public static class AuthEndpoints
 {

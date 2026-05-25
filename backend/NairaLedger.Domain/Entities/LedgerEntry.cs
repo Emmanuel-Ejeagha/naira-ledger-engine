@@ -1,7 +1,4 @@
-﻿using NairaLedger.Domain.BaseTypes;
-using NairaLedger.Domain.Enums;
-
-namespace NairaLedger.Domain.Entities;
+﻿namespace NairaLedger.Domain.Entities;
 
 /// <summary>
 /// A single entry in the double-entry ledger. Always part of a Transaction aggregate.

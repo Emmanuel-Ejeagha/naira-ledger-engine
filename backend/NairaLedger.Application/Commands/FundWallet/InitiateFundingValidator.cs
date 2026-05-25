@@ -1,6 +1,4 @@
-﻿using FluentValidation;
-
-namespace NairaLedger.Application.Commands.FundWallet;
+﻿namespace NairaLedger.Application.Commands.FundWallet;
 
 public class InitiateFundingValidator : AbstractValidator<InitiateFundingCommand>
 {

@@ -1,6 +1,4 @@
-﻿using NairaLedger.Application.Commands.FundWallet;
-
-namespace NairaLedger.Application.Interfaces;
+﻿namespace NairaLedger.Application.Interfaces;
 
 /// <summary>
 /// Abstraction for verifying and processing Paystack webhook events.

@@ -1,11 +1,4 @@
-﻿using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
-using NairaLedger.Application.Interfaces;
-using NairaLedger.Tests.Infrastructure;
-using NairaWallet.Application.Interfaces;
-using System.Security.Claims;
-
-namespace NairaLedger.Tests.Infrastructure;
+﻿namespace NairaLedger.Tests.Infrastructure;
 
 public class JwtTokenAndRefreshTests : IntegrationTestBase
 {

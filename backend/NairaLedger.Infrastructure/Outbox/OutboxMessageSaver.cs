@@ -1,8 +1,4 @@
-﻿using NairaLedger.Domain.BaseTypes;
-using NairaLedger.Infrastructure.Persistence;
-using System.Text.Json;
-
-namespace NairaLedger.Infrastructure.Outbox;
+﻿namespace NairaLedger.Infrastructure.Outbox;
 
 /// <summary>
 /// Intercepts domain events from aggregates during SaveChanges and persists them as outbox messages.

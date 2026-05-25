@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.OpenApi;
-using Swashbuckle.AspNetCore.SwaggerGen;
-
-namespace NairaLedger.WebApi.Authorization;
+﻿namespace NairaLedger.WebApi.Authorization;
 
 public class AuthorizeCheckOperationFilter : IOperationFilter
 {

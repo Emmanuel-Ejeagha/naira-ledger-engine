@@ -1,12 +1,4 @@
-﻿using Hangfire;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
-using NairaLedger.Application.EventHandlers;
-using NairaLedger.Domain.DomianEvents;
-using NairaLedger.Infrastructure.Persistence;
-using System.Text.Json;
-
-namespace NairaLedger.Infrastructure.Outbox;
+﻿namespace NairaLedger.Infrastructure.Outbox;
 
 /// <summary>
 /// Hangfire job that publishes pending outbox messages.

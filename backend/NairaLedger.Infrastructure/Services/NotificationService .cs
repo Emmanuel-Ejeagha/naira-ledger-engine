@@ -1,7 +1,4 @@
-﻿using NairaLedger.Application.Commands;
-using NairaLedger.Application.Interfaces;
-
-namespace NairaLedger.Infrastructure.Services;
+﻿namespace NairaLedger.Infrastructure.Services;
 
 /// <summary>
 /// Sends real‑time notifications to users via the injected IRealTimeNotifier (SignalR in production).

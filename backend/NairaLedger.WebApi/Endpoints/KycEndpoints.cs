@@ -1,8 +1,4 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using NairaLedger.Application.Commands.Kyc;
-
-namespace NairaLedger.WebApi.Endpoints;
+﻿namespace NairaLedger.WebApi.Endpoints;
 
 public static class KycEndpoints
 {

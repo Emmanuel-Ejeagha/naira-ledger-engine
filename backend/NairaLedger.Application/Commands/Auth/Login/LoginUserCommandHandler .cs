@@ -1,8 +1,4 @@
-﻿using MediatR;
-using NairaLedger.Application.Interfaces;
-using System.Security.Claims;
-
-namespace NairaLedger.Application.Commands.Auth;
+﻿namespace NairaLedger.Application.Commands.Auth;
 
 /// <summary>
 /// Authenticates a user and returns a JWT + refresh token.

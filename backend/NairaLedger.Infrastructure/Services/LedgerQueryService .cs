@@ -1,9 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using NairaLedger.Application.Interfaces;
-using NairaLedger.Domain.Enums;
-using NairaLedger.Infrastructure.Persistence;
-
-namespace NairaLedger.Infrastructure.Services;
+﻿namespace NairaLedger.Infrastructure.Services;
 
 /// <inheritdoc />
 public class LedgerQueryService : ILedgerQueryService

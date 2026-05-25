@@ -1,11 +1,4 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using NairaLedger.Application.Commands.CreateWallet;
-using NairaLedger.Application.Commands.FundWallet;
-using NairaLedger.Application.Queries.GetWalletBalance;
-using NairaLedger.Domain.Interfaces;
-
-namespace NairaLedger.WebApi.Endpoints;
+﻿namespace NairaLedger.WebApi.Endpoints;
 
 public static class WalletEndpoints
 {

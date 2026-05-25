@@ -1,12 +1,4 @@
-﻿using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
-using NairaLedger.Application.Interfaces;
-using NairaLedger.Domain.Aggregates;
-using NairaLedger.Domain.Interfaces;
-using NairaLedger.Domain.ValueObjects;
-using NairaLedger.Tests.Infrastructure;
-
-namespace NairaLedger.Tests.Infrastructure;
+﻿namespace NairaLedger.Tests.Infrastructure;
 
 public class WalletRepositoryTests : IntegrationTestBase
 {

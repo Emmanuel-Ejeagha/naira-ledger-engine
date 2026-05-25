@@ -1,8 +1,4 @@
-﻿using MediatR;
-using NairaLedger.Application.Interfaces;
-using System.Security.Claims;
-
-namespace NairaLedger.Application.Commands.Auth.Token;
+﻿namespace NairaLedger.Application.Commands.Auth.Token;
 
 /// <summary>
 /// Refreshes access token using a valid refresh token (rotation).

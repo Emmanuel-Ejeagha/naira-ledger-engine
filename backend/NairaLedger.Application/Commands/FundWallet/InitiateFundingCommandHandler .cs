@@ -1,8 +1,4 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using NairaLedger.Application.Interfaces;
-
-namespace NairaLedger.Application.Commands.FundWallet;
+﻿namespace NairaLedger.Application.Commands.FundWallet;
 
 /// <summary>
 /// Initiates a Paystack payment session via the payment gateway.

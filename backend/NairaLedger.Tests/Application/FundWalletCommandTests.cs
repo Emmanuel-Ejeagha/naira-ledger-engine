@@ -1,13 +1,4 @@
-﻿using FluentAssertions;
-using Microsoft.Extensions.Logging;
-using Moq;
-using NairaLedger.Application.Commands.FundWallet;
-using NairaLedger.Application.Interfaces;
-using NairaLedger.Domain.Aggregates;
-using NairaLedger.Domain.Interfaces;
-using NairaLedger.Domain.ValueObjects;
-
-namespace NairaLedger.Tests.Application;
+﻿namespace NairaLedger.Tests.Application;
 
 /// <summary>
 /// Tests for FundWalletCommandHandler covering success, inactive wallet, and missing wallet scenarios.

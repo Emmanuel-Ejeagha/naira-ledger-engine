@@ -1,10 +1,4 @@
-﻿using FluentAssertions;
-using Moq;
-using NairaLedger.Application.DTOs;
-using NairaLedger.Application.Interfaces;
-using NairaLedger.Application.Queries.GetTransactionHistory;
-
-namespace NairaLedger.Tests.Application;
+﻿namespace NairaLedger.Tests.Application;
 
 /// <summary>
 /// Comprehensive tests for the GetTransactionHistory query handler,

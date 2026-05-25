@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using NairaLedger.Application.Interfaces;
-using NairaLedger.Infrastructure.Identity;
+﻿using NairaLedger.Application.Exceptions;
 
 namespace NairaLedger.Infrastructure.Services;
 
@@ -25,14 +23,18 @@ public class UserService : IUserService
             UserName = email,
             Email = email,
             FullName = fullName,
-            EmailConfirmed = false,
+            EmailConfirmed = false
         };
-        
+
         var result = await _userManager.CreateAsync(user, password);
         if (!result.Succeeded)
         {
             var errors = string.Join("; ", result.Errors.Select(e => e.Description));
-            throw new InvalidOperationException($"user creation failed: {errors}");
+            // If the error indicates a duplicate username or email, throw our custom exception
+            if (result.Errors.Any(e => e.Code == "DuplicateUserName" || e.Code == "DuplicateEmail"))
+                throw new UserAlreadyExistsException(email);
+
+            throw new InvalidOperationException($"User creation failed: {errors}");
         }
 
         return new CreateUserResult(user.Id, user.Email, user.FullName);
@@ -40,7 +42,7 @@ public class UserService : IUserService
 
     public async Task<UserDto?> FindByEmailAsync(string email, CancellationToken cancellationToken = default)
     {
-        var user = await _userManager.FindByIdAsync(email);
+        var user = await _userManager.FindByEmailAsync(email);
         return user is not null ? new UserDto(user.Id, user.Email!, user.FullName) : null;
     }
 

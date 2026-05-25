@@ -1,6 +1,4 @@
-﻿using System.Security.Claims;
-
-namespace NairaLedger.Application.Interfaces;
+﻿namespace NairaLedger.Application.Interfaces;
 
 /// <summary>
 /// Generates and validates JWT tokens and refresh tokens.

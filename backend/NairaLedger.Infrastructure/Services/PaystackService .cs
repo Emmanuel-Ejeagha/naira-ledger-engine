@@ -1,14 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using NairaLedger.Application.Commands.FundWallet;
-using NairaLedger.Application.Interfaces;
-using NairaLedger.Domain.ValueObjects;
-using System.Net.Http.Json;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json;
-
-namespace NairaLedger.Infrastructure.Services;
+﻿namespace NairaLedger.Infrastructure.Services;
 
 public class PaystackService : IPaystackService
 {

@@ -1,7 +1,4 @@
-﻿using MediatR;
-using NairaLedger.Application.Interfaces;
-
-namespace NairaLedger.WebApi.Endpoints;
+﻿namespace NairaLedger.WebApi.Endpoints;
 
 public static class WebhookEndpoints
 {

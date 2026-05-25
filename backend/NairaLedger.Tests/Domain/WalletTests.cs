@@ -1,10 +1,4 @@
-﻿using FluentAssertions;
-using NairaLedger.Domain.Aggregates;
-using NairaLedger.Domain.DomianEvents;
-using NairaLedger.Domain.Enums;
-using NairaLedger.Domain.ValueObjects;
-
-namespace NairaLedger.Tests.Domain;
+﻿namespace NairaLedger.Tests.Domain;
 
 /// <summary>
 /// Tests for the Wallet aggregate root: creation, KYC progression, activation.

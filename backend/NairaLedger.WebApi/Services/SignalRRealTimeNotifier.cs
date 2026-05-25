@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.SignalR;
-using NairaLedger.Application.Interfaces;
-using NairaLedger.WebApi.Hubs;
-
-namespace NairaLedger.WebApi.Services;
+﻿namespace NairaLedger.WebApi.Services;
 
 public class SignalRRealTimeNotifier : IRealTimeNotifier
 {

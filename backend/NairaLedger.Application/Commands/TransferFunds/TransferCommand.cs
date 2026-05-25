@@ -1,8 +1,4 @@
-﻿using MediatR;
-using NairaLedger.Application.Commands;
-using NairaLedger.Domain.ValueObjects;
-
-namespace NairaLedger.Application.Commands.TransferFunds;
+﻿namespace NairaLedger.Application.Commands.TransferFunds;
 
 /// <summary>
 /// Initiates a peer‑to‑peer transfer between two wallets.

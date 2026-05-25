@@ -1,9 +1,4 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using NairaLedger.Application.EventHandlers;
-using NairaLedger.Application.Interfaces;
-using NairaLedger.Infrastructure.Persistence;
-using NairaWallet.Domain.DomainEvents;
+﻿using NairaWallet.Domain.DomainEvents;
 
 namespace NairaLedger.Infrastructure.Services;
 

@@ -1,10 +1,4 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using NairaLedger.Application.Interfaces;
-using NairaLedger.Domain.Aggregates;
-using NairaLedger.Domain.Interfaces;
-
-namespace NairaLedger.Application.Commands.ReverseTransaction;
+﻿namespace NairaLedger.Application.Commands.ReverseTransaction;
 
 /// <summary>
 /// Reverses a completed transaction by creating a new balanced reversal transaction.

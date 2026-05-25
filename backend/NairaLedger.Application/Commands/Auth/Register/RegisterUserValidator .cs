@@ -1,6 +1,4 @@
-﻿using FluentValidation;
-
-namespace NairaLedger.Application.Commands.Auth.Register;
+﻿namespace NairaLedger.Application.Commands.Auth.Register;
 
 public class RegisterUserValidator : AbstractValidator<RegisterUserCommand>
 {
