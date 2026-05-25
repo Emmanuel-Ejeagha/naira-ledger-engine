@@ -1,6 +1,4 @@
-﻿using NairaLedger.Domain.DomianEvents;
-
-namespace NairaWallet.Domain.DomainEvents;
+﻿namespace NairaWallet.Domain.DomainEvents;
 
 /// <summary>
 /// Raised when a wallet is frozen by the fraud detection system.

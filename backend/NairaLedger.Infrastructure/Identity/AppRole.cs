@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-namespace NairaLedger.Infrastructure.Identity;
+﻿namespace NairaLedger.Infrastructure.Identity;
 
 /// <summary>
 /// Application role (User, Admin).

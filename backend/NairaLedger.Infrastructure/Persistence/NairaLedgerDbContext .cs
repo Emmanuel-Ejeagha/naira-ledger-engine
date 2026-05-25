@@ -1,13 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-using NairaLedger.Domain.Aggregates;
-using NairaLedger.Domain.Entities;
-using NairaLedger.Infrastructure.Identity;
-using NairaLedger.Infrastructure.Outbox;
-using NairaLedger.Infrastructure.Persistence.Configurations;
-
-namespace NairaLedger.Infrastructure.Persistence;
+﻿namespace NairaLedger.Infrastructure.Persistence;
 
 /// <summary>
 /// The main application DbContext combining domain aggregates, identity, and outbox.

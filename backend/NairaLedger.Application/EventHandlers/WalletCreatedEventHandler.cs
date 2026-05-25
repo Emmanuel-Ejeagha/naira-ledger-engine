@@ -1,9 +1,4 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using NairaLedger.Application.Interfaces;
-using NairaLedger.Domain.DomianEvents;
-
-namespace NairaLedger.Application.EventHandlers;
+﻿namespace NairaLedger.Application.EventHandlers;
 
 /// <summary>
 /// Sends a notification when a new wallet is created.

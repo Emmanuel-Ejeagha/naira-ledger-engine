@@ -1,6 +1,4 @@
-﻿using FluentValidation;
-
-namespace NairaLedger.Application.Commands.TransferFunds;
+﻿namespace NairaLedger.Application.Commands.TransferFunds;
 
 /// <summary>
 /// Validates the TransferCommand.

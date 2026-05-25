@@ -1,7 +1,4 @@
-﻿using StackExchange.Redis;
-using NairaLedger.Application.Interfaces;
-
-namespace NairaLedger.Infrastructure.Services;
+﻿namespace NairaLedger.Infrastructure.Services;
 
 public class RedisRefreshTokenStore : IRefreshTokenStore
 {

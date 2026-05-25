@@ -1,13 +1,4 @@
-﻿using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
-using NairaLedger.Application.Interfaces;
-using NairaLedger.Domain.Aggregates;
-using NairaLedger.Domain.Entities;
-using NairaLedger.Domain.Enums;
-using NairaLedger.Domain.Interfaces;
-using NairaLedger.Domain.ValueObjects;
-
-namespace NairaLedger.Tests.Infrastructure;
+﻿namespace NairaLedger.Tests.Infrastructure;
 
 public class LedgerQueryServiceTests : IntegrationTestBase
 {

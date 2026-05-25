@@ -1,8 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using NairaLedger.Domain.Entities;
-
-namespace NairaLedger.Infrastructure.Persistence.Configurations;
+﻿namespace NairaLedger.Infrastructure.Persistence.Configurations;
 
 internal class LedgerEntryConfiguration : IEntityTypeConfiguration<LedgerEntry>
 {

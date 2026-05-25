@@ -1,8 +1,4 @@
-﻿using MediatR;
-using NairaLedger.Application.Commands.Auth;
-using NairaLedger.Application.Interfaces;
-
-namespace NairaLedger.Application.Commands.Auth;
+﻿namespace NairaLedger.Application.Commands.Auth;
 
 public class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailCommand, VerifyEmailResponse>
 {

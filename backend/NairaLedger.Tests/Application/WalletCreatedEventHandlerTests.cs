@@ -1,11 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Moq;
-using NairaLedger.Application.Commands;
-using NairaLedger.Application.EventHandlers;
-using NairaLedger.Domain.DomianEvents;
-using NairaLedger.Domain.ValueObjects;
-
-namespace NairaLedger.Tests.Application;
+﻿namespace NairaLedger.Tests.Application;
 
 /// <summary>
 /// Tests the WalletCreatedEventHandler notification flow.

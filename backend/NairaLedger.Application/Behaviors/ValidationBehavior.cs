@@ -1,7 +1,4 @@
-﻿using FluentValidation;
-using MediatR;
-
-namespace NairaLedger.Application.Behaviors;
+﻿namespace NairaLedger.Application.Behaviors;
 
 /// <summary>
 /// Automatically validates every request that has a corresponding validator.

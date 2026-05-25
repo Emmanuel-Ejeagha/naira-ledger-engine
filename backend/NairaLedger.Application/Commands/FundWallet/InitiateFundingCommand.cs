@@ -1,6 +1,4 @@
-﻿using MediatR;
-
-namespace NairaLedger.Application.Commands.FundWallet;
+﻿namespace NairaLedger.Application.Commands.FundWallet;
 
 /// <summary>
 /// Initiates a Paystack payment session and returns a payment authorization URL.

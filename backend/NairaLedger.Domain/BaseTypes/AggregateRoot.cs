@@ -1,6 +1,4 @@
-﻿using NairaLedger.Domain.DomianEvents;
-
-namespace NairaLedger.Domain.BaseTypes;
+﻿namespace NairaLedger.Domain.BaseTypes;
 
 /// <summary>
 /// Base class for all aggregate roots. Manages a collection of domain events 

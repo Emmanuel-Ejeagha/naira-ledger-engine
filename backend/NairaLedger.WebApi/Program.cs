@@ -1,25 +1,3 @@
-using Hangfire;
-using Hangfire.Dashboard;
-using HealthChecks.UI.Client;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.RateLimiting;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi;
-using NairaLedger.Application.Interfaces;
-using NairaLedger.Application;
-using NairaLedger.Infrastructure;
-using NairaLedger.Infrastructure.Data;
-using NairaLedger.Infrastructure.Outbox;
-using NairaLedger.WebApi.Authorization;
-using NairaLedger.WebApi.Endpoints;
-using NairaLedger.WebApi.Hubs;
-using NairaLedger.WebApi.Middleware;
-using NairaLedger.WebApi.Services;
-using Serilog;
-using System.Text;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // ── Serilog ──────────────────────────────────────────

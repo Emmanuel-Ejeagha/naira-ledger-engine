@@ -1,13 +1,4 @@
-﻿using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using NairaLedger.Domain.DomianEvents;
-using NairaLedger.Domain.ValueObjects;
-using NairaLedger.Infrastructure.Outbox;
-using NairaLedger.Infrastructure.Persistence;
-using System.Text.Json;
-
-namespace NairaLedger.Tests.Infrastructure;
+﻿namespace NairaLedger.Tests.Infrastructure;
 
 public class OutboxPublisherJobTests : IntegrationTestBase
 {

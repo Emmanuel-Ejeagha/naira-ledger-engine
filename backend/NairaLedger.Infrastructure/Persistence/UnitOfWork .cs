@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Storage;
-using NairaLedger.Application.Interfaces;
-
-namespace NairaLedger.Infrastructure.Persistence;
+﻿namespace NairaLedger.Infrastructure.Persistence;
 
 public class UnitOfWork : IUnitOfWork
 {

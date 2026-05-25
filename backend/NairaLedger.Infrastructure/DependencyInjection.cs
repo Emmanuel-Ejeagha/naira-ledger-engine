@@ -1,19 +1,4 @@
-﻿using Hangfire;
-using Hangfire.PostgreSql;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using NairaLedger.Application.Interfaces;
-using NairaLedger.Domain.Interfaces;
-using NairaLedger.Infrastructure.Identity;
-using NairaLedger.Infrastructure.Outbox;
-using NairaLedger.Infrastructure.Persistence;
-using NairaLedger.Infrastructure.Persistence.Repositories;
-using NairaLedger.Infrastructure.Services;
-using StackExchange.Redis;
-
-namespace NairaLedger.Infrastructure;
+﻿namespace NairaLedger.Infrastructure;
 
 public static class DependencyInjection
 {

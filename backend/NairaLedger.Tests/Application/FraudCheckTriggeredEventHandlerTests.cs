@@ -1,11 +1,4 @@
-﻿using FluentAssertions;
-using Microsoft.Extensions.Logging;
-using Moq;
-using NairaLedger.Application.EventHandlers;
-using NairaLedger.Application.Interfaces;
-using NairaLedger.Domain.DomianEvents;
-
-namespace NairaLedger.Tests.Application;
+﻿namespace NairaLedger.Tests.Application;
 
 /// <summary>
 /// Tests the FraudCheckTriggeredEventHandler escalation and logging.

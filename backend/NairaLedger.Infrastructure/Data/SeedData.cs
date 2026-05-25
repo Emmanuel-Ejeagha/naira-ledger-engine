@@ -1,12 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
-using NairaLedger.Domain.Aggregates;
-using NairaLedger.Domain.ValueObjects;
-using NairaLedger.Infrastructure.Identity;
-using NairaLedger.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
-
-namespace NairaLedger.Infrastructure.Data;
+﻿namespace NairaLedger.Infrastructure.Data;
 
 public static class SeedData
 {

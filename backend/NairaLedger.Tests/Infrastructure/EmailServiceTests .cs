@@ -1,8 +1,4 @@
-﻿using FluentAssertions;
-using Microsoft.Extensions.DependencyInjection;
-using NairaLedger.Application.Interfaces;
-
-namespace NairaLedger.Tests.Infrastructure;
+﻿namespace NairaLedger.Tests.Infrastructure;
 
 public class EmailServiceTests : IntegrationTestBase
 {

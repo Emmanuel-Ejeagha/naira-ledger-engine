@@ -1,6 +1,4 @@
-﻿using NairaLedger.Domain.Aggregates;
-
-namespace NairaLedger.Application.Interfaces;
+﻿namespace NairaLedger.Application.Interfaces;
 
 /// <summary>
 /// Resolves the wallet associated with a given user email.

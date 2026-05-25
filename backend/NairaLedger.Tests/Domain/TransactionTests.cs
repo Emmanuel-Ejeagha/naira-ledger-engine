@@ -1,11 +1,4 @@
-﻿using FluentAssertions;
-using NairaLedger.Domain.Aggregates;
-using NairaLedger.Domain.DomianEvents;
-using NairaLedger.Domain.Entities;
-using NairaLedger.Domain.Enums;
-using NairaLedger.Domain.ValueObjects;
-
-namespace NairaLedger.Tests.Domain;
+﻿namespace NairaLedger.Tests.Domain;
 
 public class TransactionTests
 {

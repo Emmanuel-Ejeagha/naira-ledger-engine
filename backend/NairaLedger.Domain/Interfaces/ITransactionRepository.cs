@@ -1,7 +1,4 @@
-﻿using NairaLedger.Domain.Aggregates;
-using NairaLedger.Domain.ValueObjects;
-
-namespace NairaLedger.Domain.Interfaces;
+﻿namespace NairaLedger.Domain.Interfaces;
 
 
 public interface ITransactionRepository

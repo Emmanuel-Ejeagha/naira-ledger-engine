@@ -1,10 +1,4 @@
-﻿using NairaLedger.Domain.BaseTypes;
-using NairaLedger.Domain.DomianEvents;
-using NairaLedger.Domain.Entities;
-using NairaLedger.Domain.Enums;
-using NairaLedger.Domain.ValueObjects;
-
-namespace NairaLedger.Domain.Aggregates;
+﻿namespace NairaLedger.Domain.Aggregates;
 
 /// <summary>
 /// Aggregate root representing a financial transaction.

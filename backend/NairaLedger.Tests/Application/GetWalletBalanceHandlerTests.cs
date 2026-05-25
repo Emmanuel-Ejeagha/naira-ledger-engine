@@ -1,9 +1,4 @@
-﻿using FluentAssertions;
-using Moq;
-using NairaLedger.Application.Interfaces;
-using NairaLedger.Application.Queries.GetWalletBalance;
-
-namespace NairaLedger.Tests.Application;
+﻿namespace NairaLedger.Tests.Application;
 
 /// <summary>
 /// Tests for the wallet balance query handler.

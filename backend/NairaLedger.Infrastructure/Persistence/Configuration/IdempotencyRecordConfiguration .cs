@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
-
-namespace NairaLedger.Infrastructure.Persistence.Configurations;
+﻿namespace NairaLedger.Infrastructure.Persistence.Configurations;
 
 internal class IdempotencyRecordConfiguration : IEntityTypeConfiguration<IdempotencyRecord>
 {

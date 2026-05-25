@@ -1,6 +1,4 @@
-﻿using MediatR;
-
-namespace NairaLedger.Application.Commands.Auth;
+﻿namespace NairaLedger.Application.Commands.Auth;
 
 /// <summary>
 /// Verifies a user's email address using the token sent after registration.

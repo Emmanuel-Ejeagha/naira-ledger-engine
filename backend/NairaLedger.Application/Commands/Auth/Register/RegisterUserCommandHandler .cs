@@ -1,10 +1,4 @@
-﻿using MediatR;
-using NairaLedger.Application.Interfaces;
-using NairaLedger.Domain.Aggregates;
-using NairaLedger.Domain.Interfaces;
-using NairaLedger.Domain.ValueObjects;
-
-namespace NairaLedger.Application.Commands.Auth.Register;
+﻿namespace NairaLedger.Application.Commands.Auth.Register;
 
 /// <summary>
 /// Creates a new user and automatically provisions a wallet.

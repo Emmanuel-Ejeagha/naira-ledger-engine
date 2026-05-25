@@ -1,5 +1,4 @@
-﻿
-namespace NairaLedger.Domain.DomianEvents;
+﻿namespace NairaLedger.Domain.DomianEvents;
 
 /// <summary>
 /// Raised when an incoming Paystack webhook passes signature verification.

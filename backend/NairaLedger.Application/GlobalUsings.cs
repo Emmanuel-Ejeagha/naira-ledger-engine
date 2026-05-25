@@ -1,0 +1,14 @@
+﻿global using FluentValidation;
+global using MediatR;
+global using Microsoft.Extensions.Logging;
+global using NairaLedger.Application.Commands;
+global using NairaLedger.Application.Commands.FundWallet;
+global using NairaLedger.Application.DTOs;
+global using NairaLedger.Application.Interfaces;
+global using NairaLedger.Domain.Aggregates;
+global using NairaLedger.Domain.DomianEvents;
+global using NairaLedger.Domain.Entities;
+global using NairaLedger.Domain.Enums;
+global using NairaLedger.Domain.Interfaces;
+global using NairaLedger.Domain.ValueObjects;
+global using System.Security.Claims;

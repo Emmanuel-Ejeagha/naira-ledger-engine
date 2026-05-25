@@ -1,11 +1,4 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using NairaLedger.Application.Interfaces;
-using NairaLedger.Domain.Aggregates;
-using NairaLedger.Domain.Interfaces;
-using NairaLedger.Domain.ValueObjects;
-
-namespace NairaLedger.Application.Commands.CreateWallet;
+﻿namespace NairaLedger.Application.Commands.CreateWallet;
 
 public class CreateWalletCommandHandler : IRequestHandler<CreateWalletCommand, CreateWalletResponse>
 {

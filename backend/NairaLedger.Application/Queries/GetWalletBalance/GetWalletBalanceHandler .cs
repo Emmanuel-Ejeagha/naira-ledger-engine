@@ -1,7 +1,4 @@
-﻿using MediatR;
-using NairaLedger.Application.Interfaces;
-
-namespace NairaLedger.Application.Queries.GetWalletBalance;
+﻿namespace NairaLedger.Application.Queries.GetWalletBalance;
 
 /// <summary>
 /// Handles balance queries by calling the ledger query service.

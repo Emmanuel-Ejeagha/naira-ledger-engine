@@ -1,9 +1,4 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
-using NairaLedger.Application.Commands.TransferFunds;
-using NairaLedger.Application.Commands.ReverseTransaction;
-
-namespace NairaLedger.WebApi.Endpoints;
+﻿namespace NairaLedger.WebApi.Endpoints;
 
 public static class TransferEndpoints
 {
