@@ -1,36 +1,39 @@
-# NairaWalletEngine
+# NairaLedger
 
 A production‑grade, double‑entry digital wallet and ledger API for the Nigerian market (NGN). Built with .NET 10, Clean Architecture, and financial‑first design principles.
 
+---
 
 ## 🧭 Overview
 
-NairaWallet provides:
+NairaLedger provides:
 
-- **User wallets** (one per registered user) with KYC tiers
-- **P2P transfers** (NGN)
-- **Paystack funding** via webhooks
-- **Double‑entry ledger** – every transaction is immutable and auditable
-- **Idempotency** – duplicate operations are safely detected and ignored
-- **Reversals** (30‑minute window)
-- **Fraud velocity checks**
-- **Real‑time notifications** (SignalR)
-- **PDF statements**, **CSV exports**, and **QR code payments** (future layers)
+- **User wallets** (one per registered user) with KYC tiers  
+- **P2P transfers** (NGN)  
+- **Paystack funding** via webhooks  
+- **Double‑entry ledger** – every transaction is immutable and auditable  
+- **Idempotency** – duplicate operations are safely detected and ignored  
+- **Reversals** (30‑minute window)  
+- **Fraud velocity checks** – automatic wallet freeze  
+- **Real‑time notifications** (SignalR)  
+- **Email alerts** for debits and credits  
+- **PDF statements, CSV exports, QR code payments** (future enhancements)
 
 ---
 
 ## 🏗 Architecture
 
-NairaWallet follows **Clean Architecture** (Hexagonal / Onion) with strict dependency direction:
-WebApi (presentation)
-↓
-Infrastructure (persistence, caching, external services)
-↓
-Application (use cases, commands, queries, behaviors)
-↓
-Domain (entities, value objects, domain events, repository interfaces)
+NairaLedger follows **Clean Architecture** (Hexagonal / Onion) with strict dependency direction:
 
-text
+```
+WebApi (presentation)
+    ↓
+Infrastructure (persistence, caching, external services)
+    ↓
+Application (use cases, commands, queries, behaviors)
+    ↓
+Domain (entities, value objects, domain events, repository interfaces)
+```
 
 **Domain** has zero external dependencies – no MediatR, no EF Core, no ASP.NET.  
 **Application** depends only on Domain, and defines interfaces for Infrastructure.  
@@ -57,61 +60,79 @@ All decisions are documented in [`docs/adr/`](docs/adr/):
 - **Immutable entries**: corrections only via reversal transactions.
 - **Decimal precision** (`decimal`, not `float` or `double`).
 - **Idempotency keys** prevent duplicate funding/transfers.
-- **Concurrency safety** via optimistic locking (wallet version) and serializable transactions.
+- **Concurrency safety** via optimistic locking (wallet version) and serializable transactions when necessary.
 - **Negative balances** prevented unless explicitly allowed (currently not allowed).
 - **Reversal window** of 30 minutes from transaction creation.
+- **Fraud velocity checks** automatically freeze wallets on high‑velocity rules.
 
 ---
-## 🧱 Project Structure (so far)
+
+## 🧱 Project Structure
+
 ```
 naira-ledger-engine/
 ├── backend/
-│ ├── NairaWallet.sln
-│ ├── Directory.Build.props
-│ ├── global.json
-│ ├── .editorconfig
-│ ├── NairaWallet.Domain/ # ✅ Completed (Layer 1)
-│ │ ├── Aggregates/ (Wallet, Transaction)
-│ │ ├── Entities/ (LedgerEntry)
-│ │ ├── ValueObjects/ (Money, IdempotencyKey, TransactionReference, WalletTag, UserId)
-│ │ ├── Enums/ (TransactionType, TransactionStatus, LedgerEntryDirection, KycLevel)
-│ │ ├── DomainEvents/ (WalletCreated, TransferCompleted, FraudCheckTriggered, ...)
-│ │ └── Interfaces/ (IWalletRepository, ITransactionRepository)
-│ ├── NairaWallet.Application/ # ✅ Completed (Layer 2)
-│ │ ├── Commands/ (CreateWallet, FundWallet, Transfer, ReverseTransaction)
-│ │ ├── Queries/ (GetWalletBalance, GetTransactionHistory)
-│ │ ├── Behaviors/ (Idempotency, Validation)
-│ │ ├── EventHandlers/ (WalletCreated, TransferCompleted, FraudCheck)
-│ │ ├── Interfaces/ (IIdempotencyStore, ILedgerQueryService, IUnitOfWork, ...)
-│ │ └── DTOs/
-│ ├── NairaWallet.Infrastructure/ # 🔨 Next (Layer 3)
-│ ├── NairaWallet.WebApi/ # 🔨 After Infrastructure (Layer 4)
-│ └── NairaWallet.Tests/
-│ ├── Domain/ # ✅ Full coverage
-│ └── Application/ # ✅ Full coverage
-├── frontend/ # 🔜 React + TypeScript (later)
+│   ├── NairaLedger.sln
+│   ├── Directory.Build.props
+│   ├── global.json
+│   ├── .editorconfig
+│   ├── NairaLedger.Domain/               # ✅ Completed
+│   │   ├── Aggregates/                   (Wallet, Transaction)
+│   │   ├── Entities/                     (LedgerEntry)
+│   │   ├── ValueObjects/                 (Money, IdempotencyKey, TransactionReference, WalletTag, UserId)
+│   │   ├── Enums/                        (TransactionType, TransactionStatus, LedgerEntryDirection, KycLevel)
+│   │   ├── DomainEvents/                 (WalletCreated, TransferCompleted, FraudCheckTriggered, WalletFrozen, ...)
+│   │   └── Interfaces/                   (IWalletRepository, ITransactionRepository)
+│   ├── NairaLedger.Application/          # ✅ Completed
+│   │   ├── Commands/                     (CreateWallet, FundWallet, Transfer, ReverseTransaction, Auth, KYC)
+│   │   ├── Queries/                      (GetWalletBalance, GetTransactionHistory)
+│   │   ├── Behaviors/                    (Idempotency, Validation)
+│   │   ├── EventHandlers/                (WalletCreated, TransferCompleted, FraudCheck, WalletFrozen)
+│   │   ├── Interfaces/                   (IIdempotencyStore, ILedgerQueryService, IUnitOfWork, IPaystackService, IPaymentGateway, IUserService, IEmailService, IRealTimeNotifier, ...)
+│   │   ├── DTOs/                         (TransactionDto, PagedResponse)
+│   │   └── Exceptions/                   (UserAlreadyExistsException)
+│   ├── NairaLedger.Infrastructure/       # ✅ Completed
+│   │   ├── Persistence/                  (NairaLedgerDbContext, EF Configurations, Repositories, UnitOfWork, Migrations)
+│   │   ├── Identity/                     (AppUser, AppRole)
+│   │   ├── Services/                     (IdempotencyStore, LedgerQueryService, TransactionQueryService, FraudDetectionService, PaystackService, PaystackPaymentGateway, EmailService, NotificationService, JwtTokenService, RedisRefreshTokenStore, UserService)
+│   │   ├── Outbox/                       (OutboxMessage, OutboxPublisherJob)
+│   │   ├── HealthChecks/
+│   │   └── DependencyInjection.cs
+│   ├── NairaLedger.WebApi/               # ✅ Completed
+│   │   ├── Program.cs
+│   │   ├── Middleware/                   (ExceptionHandlingMiddleware, CorrelationIdMiddleware)
+│   │   ├── Endpoints/                   (Auth, Wallets, Transfers, Transactions, KYC, Webhooks)
+│   │   ├── Hubs/                         (NotificationHub)
+│   │   ├── Services/                     (SignalRRealTimeNotifier)
+│   │   └── Authorization/               (Policies, AuthorizeCheckOperationFilter)
+│   └── NairaLedger.Tests/                # ✅ Full coverage
+│       ├── Domain/
+│       ├── Application/
+│       └── Infrastructure/
+├── frontend/                             # 🔜 React + TypeScript (future)
 ├── docs/
-│ ├── adr/ # ✅ All ADRs written
-│ ├── api/ # 🔜 Swagger / Postman
-│ └── diagrams/ # 🔜 Sequence, C4, ERD
-├── docker-compose.yml # ✅ PostgreSQL + Redis + WebApi placeholder
-├── .github/workflows/dotnet.yml # ✅ CI pipeline
+│   ├── adr/                              # ✅ All ADRs written
+│   ├── api/                              # 🔜 Swagger / Postman
+│   └── diagrams/                         # 🔜 Sequence, C4, ERD
+├── docker-compose.yml
+├── docker-compose.override.yml
+├── .github/workflows/dotnet.yml
 └── README.md
-
 ```
 
 ---
 
 ## 🚦 Current Status
 
-**Layer 1 – Domain** ✅  
-**Layer 2 – Application** ✅  
+| Layer           | Status      |
+|-----------------|-------------|
+| **Domain**      | ✅ Complete |
+| **Application** | ✅ Complete |
+| **Infrastructure** | ✅ Complete |
+| **WebApi**      | ✅ Complete |
+| **Tests**       | ✅ Full coverage (Domain, Application, Infrastructure integration tests) |
 
-- All domain aggregates, value objects, and invariants implemented and tested.
-- All command handlers, queries, pipeline behaviors (idempotency, validation), and domain event handlers implemented and tested.
-- No `TODO`s or placeholder code – every handler is fully compilable and testable.
-
-**Next:** Layer 3 – Infrastructure (PostgreSQL, Redis, EF Core, Hangfire)
+All layers are fully production‑ready. Zero placeholders. Zero TODOs.
 
 ---
 
@@ -128,8 +149,12 @@ naira-ledger-engine/
 | Validation       | FluentValidation                        |
 | Mediator         | MediatR 12                              |
 | Testing          | xUnit, FluentAssertions, Moq, Testcontainers |
-| Monitoring       | Serilog, OpenTelemetry readiness (later) |
-| Frontend         | React + TypeScript (Vite)               |
+| Monitoring       | Serilog, OpenTelemetry readiness, Health checks (PostgreSQL, Redis, Hangfire) |
+| Rate Limiting    | Built‑in ASP.NET Core Rate Limiting     |
+| Notifications    | SignalR                                 |
+| Payment Gateway  | Paystack (HTTP client)                 |
+| Email            | SMTP                                    |
+| Documentation    | Swagger / OpenAPI                       |
 
 ---
 
@@ -139,79 +164,134 @@ naira-ledger-engine/
 
 - .NET 10 SDK (10.0.100+)
 - Docker & Docker Compose
-- Node.js 20+ (for frontend, later)
+- (Optional) Node.js 20+ for frontend
 
-### Clone & Build
+### Clone & Run with Docker
 
 ```bash
 git clone https://github.com/your-org/naira-ledger-engine.git
-cd naira-ledger-engine
+cd naira-ledger-engine/backend
 
-# Build backend
+# Start the full stack (PostgreSQL, Redis, WebApi)
+docker-compose up -d --build
+```
+
+The API will be available at:
+- **HTTP**: `http://localhost:8080/swagger`
+- **HTTPS**: `https://localhost:8081/swagger`
+
+Migrations and seed data (admin user, system bank wallet) are applied automatically.
+
+### Run without Docker (local development)
+
+```bash
 cd backend
-dotnet build
 
-# Run tests
-dotnet test
-Run infrastructure only (for local development)
-bash
-# Start PostgreSQL and Redis
+# Start PostgreSQL and Redis manually (or use Docker just for them)
 docker-compose up -d postgres redis
 
-# The WebApi is not yet wired – you can still explore the Domain and Application layers via tests.
-📘 API Documentation (coming in Layer 4)
-Once the WebApi is implemented, Swagger UI will be available at:
+# Apply migrations
+dotnet ef database update --project NairaLedger.Infrastructure --startup-project NairaLedger.WebApi
 
-http://localhost:8080/swagger
+# Run the API
+dotnet run --project NairaLedger.WebApi
+```
 
-Example endpoints:
+Swagger: `http://localhost:5000/swagger`
 
-text
-POST   /api/v1/wallets          (create wallet)
-GET    /api/v1/wallets/{id}     (get wallet)
-POST   /api/v1/wallets/{id}/fund (fund wallet)
-POST   /api/v1/transfers        (P2P transfer)
-POST   /api/v1/transfers/{id}/reverse
-GET    /api/v1/transactions?cursor=...&pageSize=20
-A Postman collection will be provided in docs/api/.
+### Run Tests
 
-🛡 Financial Safeguards
-Idempotency Keys: All fund and transfer commands require a unique key. Repeating the same key returns the original result without double‑posting.
+```bash
+cd backend
+dotnet test
+```
 
-Double‑Entry Balancing: Transactions are constructed with mandatory debit and credit entries; unbalanced transactions throw an InvalidOperationException.
+---
 
-Reversal Window: Only transactions within 30 minutes can be reversed; reversal attempts after that are rejected.
+## 📘 API Documentation & Testing
 
-Balance Derivation: Wallet balance is computed from ledger entries, not stored as a mutable field – preventing drift.
+Swagger UI is available at the above URLs. All endpoints are documented with summaries, descriptions, and response types.
 
-Concurrency: Optimistic locking (Version token) and serializable isolation will be added in Infrastructure.
+### 🔑 Step‑by‑Step Testing Guide (Swagger / Postman)
 
-All rules are enforced at the Domain level and cannot be bypassed.
+#### 1. Register a user
+- `POST /api/v1/auth/register`
+- Body: `{ "email": "demo@nairawallet.ng", "fullName": "Demo User", "password": "Demo@1234" }`
+- Save the `walletId`.
 
-📊 Roadmap
-Layer 0 – Repository bootstrap, project structure, ADRs, CI/CD
+#### 2. Login
+- `POST /api/v1/auth/login` with same credentials.
+- Copy the `accessToken`.
 
-Layer 1 – Domain layer with aggregates, value objects, domain events, and tests
+#### 3. Authorise Swagger
+- Click **Authorize** → enter `Bearer <accessToken>`.
 
-Layer 2 – Application layer with commands, queries, idempotency, validation, and tests
+#### 4. Check wallet balance
+- `GET /api/v1/wallets/{walletId}/balance`
 
-Layer 3 – Infrastructure layer (EF Core, PostgreSQL, Redis, Hangfire, Identity, webhook processing)
+#### 5. Initiate Paystack funding
+- `POST /api/v1/wallets/{walletId}/fund`
+- Body: `{ "amount": 5000, "callbackUrl": "https://example.com" }`
+- Returns an authorization URL; in production redirect the user.
 
-Layer 4 – WebApi layer (Minimal APIs, JWT auth, Rate limiting, SignalR, Health checks)
+#### 6. Simulate webhook (funds credit)
+- `POST /api/v1/webhooks/paystack` with Paystack event payload and signature. After processing, balance increases.
 
-Frontend – React SPA (login, wallet, transfers)
+#### 7. P2P transfer
+- Register a second user, copy their `walletId`.
+- `POST /api/v1/transfers`
+- Body: `{ "fromWalletId": "...", "toWalletId": "...", "amount": 500, "idempotencyKey": "unique-key-001" }`
 
-Diagrams – C4, sequence, ERD
+#### 8. Transaction history
+- `GET /api/v1/transactions?walletId=...&pageSize=10`
 
-Postman collection & API docs
+#### 9. KYC submission & admin approval
+- `POST /api/v1/kyc/submit` (user)
+- `POST /api/v1/kyc/approve` (admin: `admin@nairawallet.ng` / `Admin123!`)
 
-Docker full stack – production Dockerfiles and compose
+#### 10. Health checks
+- Liveness: `GET /health/live`
+- Readiness: `GET /health/ready`
 
-Deployment – Azure/AWS ready
+A Postman collection will be provided in `docs/api/`.
 
-🤝 Contributing
-Please follow Clean Architecture rules when adding features. All financial code must be tested with xUnit. See .editorconfig for style conventions.
+---
 
-📄 License
+## 🛡 Financial Safeguards
+
+- All monetary operations use `decimal(18,2)`.
+- Transaction construction enforces `SUM(debits) == SUM(credits)`.
+- Idempotency keys prevent double spending; stored in DB + Redis cache.
+- Wallet balance derived from immutable ledger – never stored as mutable field.
+- Optimistic concurrency (`Version` token) prevents lost updates.
+- Fraud velocity checks freeze wallets automatically on high‑risk patterns.
+- Reversals only allowed within 30 minutes.
+- All financial writes are atomic and auditable.
+- Webhook processing is idempotent and signature‑verified.
+
+---
+
+## 📊 Roadmap
+
+- [x] Domain layer
+- [x] Application layer
+- [x] Infrastructure layer (EF Core, Redis, Hangfire, Identity, Paystack)
+- [x] WebApi layer (Minimal APIs, JWT, Rate Limiting, SignalR, Health Checks)
+- [x] Full integration tests
+- [ ] Frontend (React SPA)
+- [ ] PDF statements, CSV exports, QR payments
+- [ ] Deployment scripts (Azure/AWS)
+- [ ] Enhanced monitoring (OpenTelemetry, Grafana)
+
+---
+
+## 🤝 Contributing
+
+Please follow Clean Architecture rules. All financial code must be tested with xUnit. See `.editorconfig` for style conventions.
+
+---
+
+## 📄 License
+
 MIT
-
+```
