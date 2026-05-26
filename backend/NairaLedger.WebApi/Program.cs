@@ -155,8 +155,19 @@ using (var scope = app.Services.CreateScope())
 }
 
 // ── Recurring Jobs ──────────────────────────────────
-RecurringJob.AddOrUpdate<OutboxPublisherJob>("outbox-publisher", job => job.ExecuteAsync(), Cron.Minutely);
-
+try
+{
+    RecurringJob.AddOrUpdate<OutboxPublisherJob>(
+        "outbox-publisher",
+        job => job.ExecuteAsync(),
+        Cron.Minutely);
+}
+catch (Exception ex)
+{
+    // Log and continue – the job will be added on next restart or manually
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    logger.LogWarning(ex, "Could not register recurring job. It may already be present.");
+}
 await app.RunAsync();
 
 public class HangfireAuthorizationFilter : IDashboardAuthorizationFilter
