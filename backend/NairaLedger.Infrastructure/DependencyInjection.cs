@@ -30,7 +30,13 @@ public static class DependencyInjection
 
         // Hangfire
         services.AddHangfire(config =>
-            config.UsePostgreSqlStorage(connectionString));
+            config.UsePostgreSqlStorage(
+                    connectionString,
+                    new PostgreSqlStorageOptions
+                    {
+                        DistributedLockTimeout = TimeSpan.FromSeconds(30),
+                        QueuePollInterval = TimeSpan.FromSeconds(15)
+                    }));
         services.AddHangfireServer();
 
         // Repositories
