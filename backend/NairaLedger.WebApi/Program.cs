@@ -1,3 +1,5 @@
+using NairaLedger.Infrastructure.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // ── Serilog ──────────────────────────────────────────
@@ -25,24 +27,24 @@ builder.Services.AddSwaggerGen(options =>
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        Scheme = "bearer",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Enter your JWT token"
+        Description = "Enter your JWT token WITHOUT the 'Bearer' prefix"
     });
 
     options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
     {
-        [new OpenApiSecuritySchemeReference("bearer", document)] = []
+        [new OpenApiSecuritySchemeReference("Bearer", document)] = []
     });
 
     options.OperationFilter<AuthorizeCheckOperationFilter>();
 });
 
 // ── Authentication & Authorization ──────────────────
-var jwtSecret = builder.Configuration["Jwt:Secret"]
-    ?? throw new InvalidOperationException("JWT Secret is missing.");
+var jwtSettings = builder.Configuration.GetSection("Jwt").Get<JwtSettings>()
+    ?? throw new InvalidOperationException("JWT configuration is missing.");
 
 builder.Services.AddAuthentication(options =>
 {
@@ -59,7 +61,7 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret))
     };
 });
 

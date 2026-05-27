@@ -3,14 +3,17 @@
 public class JwtTokenService : ITokenService
 {
     private readonly JwtSettings _settings;
+    private readonly ILogger<JwtTokenService> _logger;
 
-    public JwtTokenService(IOptions<JwtSettings> settings)
+    public JwtTokenService(IOptions<JwtSettings> settings, ILogger<JwtTokenService> logger)
     {
         _settings = settings.Value;
+        _logger = logger;
     }
 
     public string GenerateAccessToken(IEnumerable<Claim> claims)
     {
+        _logger.LogDebug("Generating token with Secret length: {Length}", _settings.Secret.Length);
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.Secret));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
         var tokenDescriptor = new JwtSecurityToken(
@@ -56,7 +59,7 @@ public class JwtTokenService : ITokenService
 
 public class JwtSettings
 {
-    public string Secret { get; set; } = "Testing-tESTinG-TeStInG-poknqr90tr398tknfgew89fnsns";
+    public string Secret { get; set; } = string.Empty;
     public string Issuer { get; set; } = "NairaLedger";
     public string Audience { get; set; } = "NairaLedgerUsers";
     public int AccessTokenExpirationMinutes { get; set; } = 15;
