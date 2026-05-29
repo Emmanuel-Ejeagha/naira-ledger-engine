@@ -17,13 +17,10 @@ public class ExceptionHandlingMiddleware
         {
             await _next(context);
         }
-        catch (Exception ex)
+        catch (InvalidOperationException ex) when (ex.Message.Contains("Payment initiation failed"))
         {
-            _logger.LogError(ex, "Unhandled exception");
-            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-            context.Response.ContentType = "application/json";
-            var result = JsonSerializer.Serialize(new { error = "An unexpected error occurred." });
-            await context.Response.WriteAsync(result);
+            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            await context.Response.WriteAsJsonAsync(new { error = ex.Message });
         }
     }
 }

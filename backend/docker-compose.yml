@@ -15,7 +15,7 @@ services:
       - Jwt__Secret=your-256-bit-secret-change-me-in-production
       - Jwt__Issuer=NairaLedger
       - Jwt__Audience=NairaLedgerUsers
-      - Paystack__SecretKey=sk_test_yourkey
+      - Paystack__SecretKey=sk_test_f193d6b5f335f764cfa6faa1ee6c1ca7387037d1
       - Smtp__Host=smtp.mailtrap.io
       - Smtp__Port=587
       - Smtp__Username=your_mailtrap_user

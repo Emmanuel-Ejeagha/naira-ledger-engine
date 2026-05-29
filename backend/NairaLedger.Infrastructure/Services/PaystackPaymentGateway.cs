@@ -36,6 +36,14 @@ public class PaystackPaymentGateway : IPaymentGateway
         request.Headers.Add("Authorization", $"Bearer {_secretKey}");
 
         var response = await _httpClient.SendAsync(request, cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadAsStringAsync();
+            _logger.LogError("Paystack initiate failed: {StatusCode} {Error}", response.StatusCode, error);
+            throw new InvalidOperationException($"Payment initiation failed: {error}");
+        }
+
         response.EnsureSuccessStatusCode();
 
         var result = await response.Content.ReadFromJsonAsync<JsonElement>(cancellationToken: cancellationToken);
