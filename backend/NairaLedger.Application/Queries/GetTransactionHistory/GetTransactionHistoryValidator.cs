@@ -1,6 +1,4 @@
-﻿using FluentValidation;
-
-namespace NairaWallet.Application.Queries.GetTransactionHistory;
+﻿namespace NairaLedger.Application.Queries.GetTransactionHistory;
 
 /// <summary>
 /// Validates pagination and filter parameters for transaction history.

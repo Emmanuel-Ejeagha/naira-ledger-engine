@@ -1,13 +1,4 @@
-﻿using FluentAssertions;
-using Microsoft.Extensions.Logging;
-using Moq;
-using NairaLedger.Domain.Aggregates;
-using NairaLedger.Domain.Interfaces;
-using NairaLedger.Domain.ValueObjects;
-using NairaWallet.Application.Commands.TransferFunds;
-using NairaWallet.Application.Interfaces;
-
-namespace NairaWallet.Tests.Application;
+﻿namespace NairaLedger.Tests.Application;
 
 /// <summary>
 /// Tests transfer command handler including balance check.

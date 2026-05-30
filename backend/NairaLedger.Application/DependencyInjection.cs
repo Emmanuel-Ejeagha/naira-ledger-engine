@@ -1,14 +1,13 @@
-﻿using FluentValidation;
-using Microsoft.Extensions.DependencyInjection;
-using NairaWallet.Application.Behaviors;
+﻿using Microsoft.Extensions.DependencyInjection;
+using NairaLedger.Application.Behaviors;
 using System.Reflection;
 
-namespace NairaWallet.Application.Extensions;
+namespace NairaLedger.Application;
 
 /// <summary>
 /// Registers all Application layer dependencies (MediatR, validators, pipeline behaviors).
 /// </summary>
-public static class ServiceCollectionExtensions
+public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {

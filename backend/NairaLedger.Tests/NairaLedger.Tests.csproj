@@ -27,6 +27,8 @@
   <ItemGroup>
     <ProjectReference Include="..\NairaLedger.Application\NairaLedger.Application.csproj" />
     <ProjectReference Include="..\NairaLedger.Domain\NairaLedger.Domain.csproj" />
+    <ProjectReference Include="..\NairaLedger.Infrastructure\NairaLedger.Infrastructure.csproj" />
+    <ProjectReference Include="..\NairaLedger.WebApi\NairaLedger.WebApi.csproj" />
   </ItemGroup>
 
   <ItemGroup>

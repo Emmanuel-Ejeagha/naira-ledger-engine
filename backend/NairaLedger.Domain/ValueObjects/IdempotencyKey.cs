@@ -1,6 +1,4 @@
-﻿using NairaLedger.Domain.BaseTypes;
-
-namespace NairaLedger.Domain.ValueObjects;
+﻿namespace NairaLedger.Domain.ValueObjects;
 
 public sealed class IdempotencyKey : ValueObject
 {

@@ -1,7 +1,4 @@
-﻿using FluentAssertions;
-using NairaLedger.Domain.ValueObjects;
-
-namespace NairaLedger.Tests.Domain;
+﻿namespace NairaLedger.Tests.Domain;
 
 /// <summary>
 /// Verifies the money value object invariants and arithmetic.

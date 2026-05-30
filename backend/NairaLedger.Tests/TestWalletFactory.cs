@@ -1,7 +1,4 @@
-﻿using NairaLedger.Domain.Aggregates;
-using NairaLedger.Domain.ValueObjects;
-
-namespace NairaLedger.Tests;
+﻿namespace NairaLedger.Tests;
 
 /// <summary>
 /// Provides test‑friendly wallet instances with controllable ID and active state.

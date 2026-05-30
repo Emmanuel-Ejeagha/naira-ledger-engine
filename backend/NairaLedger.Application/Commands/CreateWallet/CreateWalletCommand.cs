@@ -1,7 +1,4 @@
-﻿using MediatR;
-using NairaLedger.Domain.ValueObjects;
-
-namespace NairaLedger.Application.Commands.CreateWallet;
+﻿namespace NairaLedger.Application.Commands.CreateWallet;
 
 /// <summary>
 /// Creates a new wallet for an existing user.

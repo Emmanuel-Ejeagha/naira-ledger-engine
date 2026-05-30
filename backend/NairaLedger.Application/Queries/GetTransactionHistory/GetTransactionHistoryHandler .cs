@@ -1,8 +1,4 @@
-﻿using MediatR;
-using NairaWallet.Application.DTOs;
-using NairaWallet.Application.Interfaces;
-
-namespace NairaWallet.Application.Queries.GetTransactionHistory;
+﻿namespace NairaLedger.Application.Queries.GetTransactionHistory;
 
 /// <summary>
 /// Handles transaction history queries via ITransactionQueryService.

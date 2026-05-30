@@ -1,14 +1,4 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using NairaLedger.Domain.Aggregates;
-using NairaLedger.Domain.Entities;
-using NairaLedger.Domain.Enums;
-using NairaLedger.Domain.Interfaces;
-using NairaLedger.Domain.ValueObjects;
-using NairaWallet.Application.Interfaces;
-
-
-namespace NairaWallet.Application.Commands.FundWallet;
+﻿namespace NairaLedger.Application.Commands.FundWallet;
 
 /// <summary>
 /// Handles wallet funding by creating a balanced double‑entry transaction.

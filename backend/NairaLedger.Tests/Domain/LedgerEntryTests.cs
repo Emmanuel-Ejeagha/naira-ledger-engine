@@ -1,8 +1,4 @@
-﻿using FluentAssertions;
-using NairaLedger.Domain.Entities;
-using NairaLedger.Domain.Enums;
-
-namespace NairaLedger.Tests.Domain;
+﻿namespace NairaLedger.Tests.Domain;
 
 public class LedgerEntryTests
 {

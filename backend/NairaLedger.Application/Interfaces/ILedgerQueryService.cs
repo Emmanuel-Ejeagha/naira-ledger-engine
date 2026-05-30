@@ -1,4 +1,4 @@
-﻿namespace NairaWallet.Application.Interfaces;
+﻿namespace NairaLedger.Application.Interfaces;
 
 /// <summary>
 /// Provides read‑only balance and ledger queries without exposing infrastructure.

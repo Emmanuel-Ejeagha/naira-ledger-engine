@@ -1,14 +1,4 @@
-﻿using Castle.Core.Logging;
-using FluentAssertions;
-using Microsoft.Extensions.Logging;
-using Moq;
-using NairaLedger.Application.Commands.CreateWallet;
-using NairaLedger.Domain.Aggregates;
-using NairaLedger.Domain.Interfaces;
-using NairaLedger.Domain.ValueObjects;
-using NairaWallet.Application.Interfaces;
-
-namespace NairaLedger.Tests.Application;
+﻿namespace NairaLedger.Tests.Application;
 
 public class CreateWalletCommandTests
 {

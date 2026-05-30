@@ -1,13 +1,4 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using NairaLedger.Domain.Aggregates;
-using NairaLedger.Domain.Entities;
-using NairaLedger.Domain.Enums;
-using NairaLedger.Domain.Interfaces;
-using NairaLedger.Domain.ValueObjects;
-using NairaWallet.Application.Interfaces;
-
-namespace NairaWallet.Application.Commands.TransferFunds;
+﻿namespace NairaLedger.Application.Commands.TransferFunds;
 
 /// <summary>
 /// Handles P2P transfers with balance validation and double‑entry posting.

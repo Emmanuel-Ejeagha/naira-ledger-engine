@@ -1,4 +1,4 @@
-﻿namespace NairaLedger.Application.Commands;
+﻿namespace NairaLedger.Application.Interfaces;
 
 /// <summary>
 /// Abstraction for real-time notification (SignalR)

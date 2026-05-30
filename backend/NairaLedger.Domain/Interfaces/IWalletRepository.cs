@@ -1,6 +1,4 @@
-﻿using NairaLedger.Domain.Aggregates;
-
-namespace NairaLedger.Domain.Interfaces;
+﻿namespace NairaLedger.Domain.Interfaces;
 
 /// <summary>
 /// Abstactions for wallet persistence.
@@ -21,7 +19,7 @@ public interface IWalletRepository
     /// <param name="userId">The unique identifier of the user.</param>
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <returns>The wallet if found; otherwise, null.</returns>
-    Task<Wallet?> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken = default);
+    Task<Wallet?> GetByUserIdAsync(UserId userId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Adds a new wallet to the repository.
@@ -37,4 +35,13 @@ public interface IWalletRepository
     /// <param name="cancellationToken">A token to cancel the operation.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
     Task UpdateAsync(Wallet wallet, CancellationToken cancellationToken = default);
+    /// <summary>
+    /// Retrieves the owner's email and full name for notification purposes.
+    /// </summary>
+    Task<WalletOwnerInfo?> GetOwnerInfoAsync(Guid walletId, CancellationToken cancellationToken = default);
 }
+
+/// <summary>
+/// Lightweight owner data for notifications.
+/// </summary>
+public record WalletOwnerInfo(string Email, string FullName);

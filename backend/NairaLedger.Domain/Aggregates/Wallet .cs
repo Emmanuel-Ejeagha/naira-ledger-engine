@@ -1,9 +1,4 @@
-﻿using NairaLedger.Domain.BaseTypes;
-using NairaLedger.Domain.DomianEvents;
-using NairaLedger.Domain.Enums;
-using NairaLedger.Domain.ValueObjects;
-
-namespace NairaLedger.Domain.Aggregates;
+﻿namespace NairaLedger.Domain.Aggregates;
 
 /// <summary>
 /// Represent's a user's digital wallet for holdoing NGN.

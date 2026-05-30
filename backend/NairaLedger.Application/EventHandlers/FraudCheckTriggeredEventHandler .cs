@@ -1,10 +1,4 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using NairaLedger.Application.EventHandlers;
-using NairaLedger.Domain.DomianEvents;
-using NairaWallet.Application.Interfaces;
-
-namespace NairaWallet.Application.EventHandlers;
+﻿namespace NairaLedger.Application.EventHandlers;
 
 /// <summary>
 /// Logs and escalates fraud alerts via the IFraudEscalationService.

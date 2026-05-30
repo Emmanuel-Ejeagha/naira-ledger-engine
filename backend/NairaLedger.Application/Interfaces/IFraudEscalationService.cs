@@ -1,4 +1,4 @@
-﻿namespace NairaWallet.Application.Interfaces;
+﻿namespace NairaLedger.Application.Interfaces;
 
 /// <summary>
 /// Abstraction for escalating fraud alerts (e.g., freeze wallet, notify admin).
