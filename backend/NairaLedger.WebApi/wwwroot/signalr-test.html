@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>SignalR Test</title>
+</head>
+<body>
+    <h2>NairaLedger SignalR Test</h2>
+    <label for="token">JWT Token:</label><br>
+    <textarea id="token" rows="3" cols="80">Paste your access token here (without 'Bearer ')</textarea><br>
+    <button onclick="connect()">Connect</button>
+    <button onclick="disconnect()">Disconnect</button>
+    <h3>Notifications</h3>
+    <ul id="messages"></ul>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <script>
+        let connection;
+        async function connect() {
+            const token = document.getElementById('token').value.trim();
+            if (!token) { alert('Paste your JWT token'); return; }
+
+            connection = new signalR.HubConnectionBuilder()
+                .withUrl(`/hubs/notifications?access_token=${token}`)
+                .configureLogging(signalR.LogLevel.Information)
+                .withAutomaticReconnect()
+                .build();
+
+            connection.on('ReceiveNotification', message => {
+                const li = document.createElement('li');
+                li.textContent = message;
+                document.getElementById('messages').appendChild(li);
+            });
+
+            try {
+                await connection.start();
+                alert('Connected!');
+            } catch (err) {
+                alert('Connection failed: ' + err);
+            }
+        }
+        async function disconnect() {
+            if (connection) await connection.stop();
+            alert('Disconnected');
+        }
+    </script>
+</body>
+</html>
