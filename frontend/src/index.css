@@ -1,153 +1,80 @@
-body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-}
+@import "@fontsource-variable/geist";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-.app-container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 20px;
-}
+@layer base {
+  :root {
+    --background: oklch(0.985 0.001 260);    /* near‑white with subtle cool tint */
+    --foreground: oklch(0.15 0.02 260);      /* very dark blue‑gray */
 
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #1a1a2e;
-  color: white;
-  padding: 10px 20px;
-  margin-bottom: 20px;
-}
+    --card: oklch(1 0 0);                    /* pure white */
+    --card-foreground: oklch(0.15 0.02 260);
 
-.navbar a, .navbar button {
-  color: white;
-  margin-left: 15px;
-  text-decoration: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.15 0.02 260);
 
-.nav-links {
-  display: flex;
-  align-items: center;
-}
+    --primary: oklch(0.28 0.08 260);         /* deep indigo‑blue, like #0F172A */
+    --primary-foreground: oklch(0.985 0 0);
 
-.user-email {
-  margin-left: 20px;
-  font-size: 0.9em;
-  opacity: 0.8;
-}
+    --secondary: oklch(0.97 0.01 250);       /* very light cool gray */
+    --secondary-foreground: oklch(0.22 0.03 260);
 
-.form-container {
-  max-width: 400px;
-  margin: 50px auto;
-}
+    --muted: oklch(0.97 0.01 250);
+    --muted-foreground: oklch(0.5 0.02 260); /* medium gray for secondary text */
 
-.form-container input {
-  width: 100%;
-  padding: 10px;
-  margin: 8px 0;
-  box-sizing: border-box;
-}
+    --accent: oklch(0.97 0.01 250);
+    --accent-foreground: oklch(0.22 0.03 260);
 
-.form-container button {
-  width: 100%;
-  padding: 10px;
-  background: #1a1a2e;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
+    --destructive: oklch(0.55 0.22 20);      /* rose‑red for errors / danger */
+    --success: oklch(0.65 0.19 145);         /* emerald green for success */
+    --warning: oklch(0.75 0.15 80);          /* amber for warnings */
+    --info: oklch(0.6 0.14 240);             /* sky‑blue for info / links */
 
-.error {
-  color: red;
-  font-size: 0.9em;
-}
+    --border: oklch(0.92 0.005 260);
+    --input: oklch(0.92 0.005 260);
+    --ring: oklch(0.55 0.12 260);            /* focus ring matches primary */
 
-/* (existing styles kept, add: ) */
-
-.app-layout {
-  display: flex;
-  min-height: 100vh;
-}
-
-.sidebar {
-  width: 240px;
-  background: #1a1a2e;
-  color: white;
-  padding: 20px 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.sidebar-brand {
-  font-size: 1.5em;
-  padding: 0 20px 20px;
-  font-weight: bold;
-}
-
-.sidebar-nav a {
-  display: block;
-  padding: 12px 20px;
-  color: #ccc;
-  text-decoration: none;
-}
-
-.sidebar-nav a.active,
-.sidebar-nav a:hover {
-  background: #16213e;
-  color: white;
-}
-
-.sidebar-footer {
-  margin-top: auto;
-  padding: 20px;
-  font-size: 0.9em;
-}
-
-.sidebar-footer button {
-  margin-top: 10px;
-  background: #e94560;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  cursor: pointer;
-}
-
-.main-area {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.top-navbar {
-  background: white;
-  padding: 15px 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.main-content {
-  flex: 1;
-  padding: 20px;
-  background: #f5f5f5;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .app-layout {
-    flex-direction: column;
+    --radius: 0.625rem;
   }
-  .sidebar {
-    width: 100%;
-    flex-direction: row;
-    overflow-x: auto;
+
+  .dark {
+    --background: oklch(0.15 0.02 260);
+    --foreground: oklch(0.95 0.01 260);
+
+    --card: oklch(0.2 0.025 260);
+    --card-foreground: oklch(0.95 0.01 260);
+
+    --popover: oklch(0.2 0.025 260);
+    --popover-foreground: oklch(0.95 0.01 260);
+
+    --primary: oklch(0.55 0.12 260);         /* lighter blue for dark mode */
+    --primary-foreground: oklch(0.15 0.02 260);
+
+    --secondary: oklch(0.25 0.025 260);
+    --secondary-foreground: oklch(0.95 0.01 260);
+
+    --muted: oklch(0.25 0.025 260);
+    --muted-foreground: oklch(0.65 0.03 260);
+
+    --accent: oklch(0.25 0.025 260);
+    --accent-foreground: oklch(0.95 0.01 260);
+
+    --destructive: oklch(0.65 0.22 20);
+    --success: oklch(0.7 0.18 145);
+    --warning: oklch(0.78 0.14 80);
+    --info: oklch(0.65 0.12 240);
+
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.55 0.12 260);
   }
-  .sidebar-nav {
-    display: flex;
+
+  * {
+    @apply border-border;
   }
-  .sidebar-nav a {
-    padding: 10px;
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
   }
 }
