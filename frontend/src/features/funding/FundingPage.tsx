@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useState, useEffect } from 'react';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { initiateFunding, verifyPayment } from '@/api/funding';
 import { useWalletBalance } from '@/features/dashboard/hooks/useDashboard';
 import { useForm } from 'react-hook-form';
@@ -13,10 +13,11 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { CheckCircle, XCircle, ExternalLink, Loader2 } from 'lucide-react';
-import { useAuthStore } from '../../stores/authStore';
+import { useAuthStore } from '@/stores/authStore';
 
 export default function FundingPage() {
   const walletId = useAuthStore((s) => s.walletId);
+  const queryClient = useQueryClient();
   const { data: balance, isLoading: balanceLoading } = useWalletBalance(walletId);
   const [authorizationUrl, setAuthorizationUrl] = useState<string | null>(null);
   const [reference, setReference] = useState<string | null>(null);
@@ -32,15 +33,23 @@ export default function FundingPage() {
   });
 
   const initiateMutation = useMutation({
-    mutationFn: (data: FundingFormData) =>
-      initiateFunding(walletId, { amount: data.amount, callbackUrl: window.location.origin + '/fund' }),
+    mutationFn: (data: FundingFormData) => {
+      if (!walletId) throw new Error('Wallet ID is missing');
+      return initiateFunding(walletId, {
+        walletId,
+        amount: data.amount,
+        callbackUrl: window.location.origin + '/fund'
+      });
+    },
     onSuccess: (data) => {
       setAuthorizationUrl(data.authorizationUrl);
       setReference(data.reference);
       toast.success('Payment link generated');
     },
     onError: (err: any) => {
-      toast.error(err.response?.data?.error || 'Initiation failed');
+      console.error('Funding initiation error:', err);  // 👈 View error in browser console
+      const message = err.response?.data?.error || err.message || 'Initiation failed';
+      toast.error(message);
     },
   });
 
@@ -50,6 +59,7 @@ export default function FundingPage() {
       if (data.status === 'success') {
         setVerifyStatus('success');
         toast.success('Payment verified!');
+        queryClient.invalidateQueries({ queryKey: ['walletBalance', walletId] });
       } else {
         setVerifyStatus('failed');
         toast.error('Payment not successful');
@@ -62,8 +72,23 @@ export default function FundingPage() {
   });
 
   const onSubmit = (data: FundingFormData) => {
+    if (!walletId) {
+      toast.error('Wallet not yet loaded. Please refresh the page.');
+      return;
+    }
     initiateMutation.mutate(data);
   };
+
+  // Show a loading skeleton while walletId is being fetched
+  if (!walletId) {
+    return (
+      <div className="space-y-6 max-w-lg">
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-32 w-full" />
+        <Skeleton className="h-64 w-full" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 max-w-lg">
@@ -100,7 +125,11 @@ export default function FundingPage() {
                 />
                 {errors.amount && <p className="text-sm text-danger">{errors.amount.message}</p>}
               </div>
-              <Button type="submit" className="w-full" disabled={initiateMutation.isPending}>
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={initiateMutation.isPending || !walletId}
+              >
                 {initiateMutation.isPending ? 'Generating...' : 'Proceed to Pay'}
               </Button>
             </form>
