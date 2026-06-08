@@ -26,12 +26,17 @@ public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, LoginUs
         if (user is null)
             throw new UnauthorizedAccessException("Invalid email or password.");
 
-        var claims = new[]
+        // Build claims
+        var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.Name, user.FullName)
         };
+
+        // Add role claims
+        var roles = await _userService.GetRolesAsync(user.UserId, cancellationToken);
+        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var accessToken = _tokenService.GenerateAccessToken(claims);
         var refreshToken = _tokenService.GenerateRefreshToken();
