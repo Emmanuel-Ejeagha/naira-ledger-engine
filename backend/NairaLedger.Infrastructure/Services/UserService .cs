@@ -73,4 +73,21 @@ public class UserService : IUserService
             throw new InvalidOperationException($"Email verification failed: {errors}");
         }
     }
+
+    public async Task<IReadOnlyList<string>> GetRolesAsync(Guid userId, CancellationToken cancellationToken)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        if (user is null) return Array.Empty<string>();
+        var roles = await _userManager.GetRolesAsync(user);
+        return roles.ToArray();
+    }
+
+    public async Task AddToRoleAsync(Guid userId, string role, CancellationToken cancellationToken)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        if (user is null) throw new InvalidOperationException("User not found.");
+        var result = await _userManager.AddToRoleAsync(user, role);
+        if (!result.Succeeded)
+            throw new InvalidOperationException($"Failed to add user to role: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+    }
 }

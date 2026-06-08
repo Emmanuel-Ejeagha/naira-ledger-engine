@@ -89,4 +89,21 @@ public class Wallet : AggregateRoot
         if (IsActive) return;
         IsActive = true;
     }
+
+    /// <summary>
+    /// Rejects a KYC submission and resets the KYC level to Unverified.
+    /// </summary>
+    public void RejectKyc()
+    {
+        KycLevel = KycLevel.Unverified;
+        UpdateVersion();
+    }
+
+    /// <summary>
+    /// Bump the concurrency token whenever any state changes.
+    /// </summary>
+    private void UpdateVersion()
+    {
+        Version = Guid.NewGuid();
+    }
 }

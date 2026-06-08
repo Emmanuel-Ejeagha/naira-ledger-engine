@@ -15,5 +15,6 @@ public static class Policies
         options.AddPolicy(CanReverseTransaction, policy => policy.RequireRole("Admin"));
         options.AddPolicy(CanViewAuditLogs, policy => policy.RequireRole("Admin"));
         options.AddPolicy(CanExportStatements, policy => policy.RequireRole("Admin"));
+        options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
     }
 }
