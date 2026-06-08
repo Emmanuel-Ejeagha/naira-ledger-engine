@@ -9,30 +9,36 @@ public static class SeedData
         var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<AppRole>>();
         var context = scope.ServiceProvider.GetRequiredService<NairaLedgerDbContext>();
 
-        // Ensure roles exist
         if (!await roleManager.RoleExistsAsync("Admin"))
             await roleManager.CreateAsync(new AppRole("Admin"));
         if (!await roleManager.RoleExistsAsync("User"))
             await roleManager.CreateAsync(new AppRole("User"));
 
-        // Create admin user
         var adminEmail = "admin@nairawallet.ng";
-        if (await userManager.FindByEmailAsync(adminEmail) is null)
+        var admin = await userManager.FindByEmailAsync(adminEmail);
+        if (admin is null)
         {
-            var admin = new AppUser
+            admin = new AppUser
             {
                 UserName = adminEmail,
                 Email = adminEmail,
                 FullName = "NairaWallet Admin",
                 EmailConfirmed = true
             };
-            await userManager.CreateAsync(admin, "Admin123!");
-            await userManager.AddToRoleAsync(admin, "Admin");
+            var result = await userManager.CreateAsync(admin, "Admin123!");
+            if (!result.Succeeded)
+                throw new InvalidOperationException($"Failed to create admin user: {string.Join(", ", result.Errors)}");
         }
 
-        // Create system bank user (for the bank float wallet)
+        if (!await userManager.IsInRoleAsync(admin, "Admin"))
+        {
+            var roleResult = await userManager.AddToRoleAsync(admin, "Admin");
+            if (!roleResult.Succeeded)
+                throw new InvalidOperationException($"Failed to assign Admin role: {string.Join(", ", roleResult.Errors)}");
+        }
+
         var systemEmail = "system@nairawallet.ng";
-        AppUser? systemUser = await userManager.FindByEmailAsync(systemEmail);
+        var systemUser = await userManager.FindByEmailAsync(systemEmail);
         if (systemUser is null)
         {
             systemUser = new AppUser
@@ -45,12 +51,10 @@ public static class SeedData
             await userManager.CreateAsync(systemUser, "SystemPass!1");
         }
 
-        // Create system bank wallet if not exists
         var bankWalletId = new Guid("00000000-0000-0000-0000-000000000001");
         if (!await context.Wallets.AnyAsync(w => w.Id == bankWalletId))
         {
             var bankWallet = new Wallet(new UserId(systemUser.Id), new WalletTag("Bank Float"));
-            // Set the known ID for the bank wallet
             typeof(Wallet).GetProperty(nameof(Wallet.Id))!
                 .SetValue(bankWallet, bankWalletId);
 
