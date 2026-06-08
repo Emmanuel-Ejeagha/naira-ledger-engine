@@ -27,6 +27,13 @@ public interface IUserService
     Task<UserDto?> GetByIdAsync(Guid userId, CancellationToken cancellationToken = default);
 
     Task VerifyEmailAsync(string email, string token, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Returns a list of role names for the given user.
+    /// </summary>
+    Task<IReadOnlyList<string>> GetRolesAsync(Guid userId, CancellationToken cancellationToken = default);
+
+    Task AddToRoleAsync(Guid userId, string role, CancellationToken cancellationToken = default);
 }
 
 /// <summary>
