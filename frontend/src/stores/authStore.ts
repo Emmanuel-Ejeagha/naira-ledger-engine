@@ -11,7 +11,8 @@ interface AuthState {
   user: User | null;
   accessToken: string | null;
   refreshToken: string | null;
-  walletId: string | null; 
+  walletId: string | null;
+  roles: string[];
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, fullName: string, password: string) => Promise<void>;
@@ -22,10 +23,10 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
-  walletId: null,
-  setWalletId: (id: string) => set({ walletId: id }),
   accessToken: localStorage.getItem('accessToken'),
   refreshToken: localStorage.getItem('refreshToken'),
+  walletId: null,
+  roles: [],
   isLoading: true,
 
   hydrate: () => {
@@ -34,6 +35,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     if (accessToken) {
       try {
         const payload = JSON.parse(atob(accessToken.split('.')[1]));
+        const rolesClaim = payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+        const roles = rolesClaim ? (Array.isArray(rolesClaim) ? rolesClaim : [rolesClaim]) : [];
         set({
           user: {
             userId: payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'],
@@ -42,15 +45,16 @@ export const useAuthStore = create<AuthState>((set) => ({
           },
           accessToken,
           refreshToken,
+          roles,
           isLoading: false,
         });
       } catch {
-        set({ isLoading: false });
+        set({ isLoading: false, roles: [] });
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
       }
     } else {
-      set({ isLoading: false });
+      set({ isLoading: false, roles: [] });
     }
   },
 
@@ -60,6 +64,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     localStorage.setItem('accessToken', accessToken);
     localStorage.setItem('refreshToken', refreshToken);
     const payload = JSON.parse(atob(accessToken.split('.')[1]));
+    const rolesClaim = payload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+    const roles = rolesClaim ? (Array.isArray(rolesClaim) ? rolesClaim : [rolesClaim]) : [];
     set({
       accessToken,
       refreshToken,
@@ -68,6 +74,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         email: payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'],
         fullName: payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'],
       },
+      roles,
     });
   },
 
@@ -78,6 +85,8 @@ export const useAuthStore = create<AuthState>((set) => ({
   logout: () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
-    set({ user: null, accessToken: null, refreshToken: null });
+    set({ user: null, accessToken: null, refreshToken: null, roles: [], walletId: null });
   },
+
+  setWalletId: (id: string) => set({ walletId: id }),
 }));
