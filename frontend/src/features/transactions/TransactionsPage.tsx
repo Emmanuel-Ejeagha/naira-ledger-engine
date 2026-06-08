@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getTransactions, type TransactionFilters } from '@/api/transactions';
 import type { TransactionDto } from '@/types/transaction';
@@ -6,19 +6,21 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Download, Search, ChevronLeft, ChevronRight, FileText } from 'lucide-react';
 import { toast } from 'sonner';
-import { useAuthStore } from '../../stores/authStore';
+import { useAuthStore } from '@/stores/authStore';
+import { downloadCSV } from '@/lib/export-csv';
+import { downloadPDF } from '@/lib/export-pdf';
 
 const PAGE_SIZE = 10;
 
 export default function TransactionsPage() {
   const walletId = useAuthStore((s) => s.walletId);
   const [cursor, setCursor] = useState<string | undefined>(undefined);
-  const [history, setHistory] = useState<TransactionDto[][]>([]); // array of pages
+  const [history, setHistory] = useState<TransactionDto[][]>([]);
 
   // Filters
   const [search, setSearch] = useState('');
@@ -36,25 +38,24 @@ export default function TransactionsPage() {
     dateTo: dateTo || undefined,
   };
 
-  const { data, isLoading, isError, error, isFetching, isPreviousData } = useQuery({
+  const { data, isLoading, isError, error, isFetching } = useQuery({
     queryKey: ['transactions', walletId, cursor, search, type, dateFrom, dateTo],
     queryFn: () => getTransactions(filters),
+    enabled: !!walletId, 
     keepPreviousData: true,
     onSuccess: (newData) => {
-      // Manage pages array for cursor-based navigation
       setHistory((prev) => {
-        // If cursor changed and we have previous pages, update accordingly
         const newHistory = [...prev];
         if (cursor) {
-          // Append if we are going forward (assuming cursor is nextCursor)
-          const existingIndex = newHistory.findIndex((page) => page[0]?.transactionId === newData.items[0]?.transactionId);
+          const existingIndex = newHistory.findIndex(
+            (page) => page[0]?.transactionId === newData.items[0]?.transactionId
+          );
           if (existingIndex >= 0) {
             newHistory[existingIndex] = newData.items;
           } else {
             newHistory.push(newData.items);
           }
         } else {
-          // Reset
           return [newData.items];
         }
         return newHistory;
@@ -76,14 +77,8 @@ export default function TransactionsPage() {
   };
 
   const handlePrevPage = () => {
-    if (history.length > 1) {
-      // Remove last page and set cursor to the previous page's first transaction's creation time? We'll simplify by going back to previous cursor (if we stored).
-      // Since we don't store cursors, we'll just reset to no cursor and refetch. This is not ideal but works for now.
-      setCursor(undefined);
-      setHistory([]);
-    } else {
-      setCursor(undefined);
-    }
+    setCursor(undefined);
+    setHistory([]);
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,12 +101,21 @@ export default function TransactionsPage() {
   };
 
   const handleExportCSV = () => {
-    // Placeholder: eventually backend endpoint
-    toast.info('CSV export coming soon');
+    if (currentPageItems.length === 0) {
+      toast.error('No transactions to export');
+      return;
+    }
+    downloadCSV(currentPageItems);
+    toast.success('CSV downloaded');
   };
 
   const handleExportPDF = () => {
-    toast.info('PDF export coming soon');
+    if (currentPageItems.length === 0) {
+      toast.error('No transactions to export');
+      return;
+    }
+    downloadPDF(currentPageItems, walletId!);
+    toast.success('PDF downloaded');
   };
 
   return (
@@ -135,7 +139,7 @@ export default function TransactionsPage() {
             <div className="space-y-2">
               <Label htmlFor="search">Search reference</Label>
               <div className="relative">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-neutral" />
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="search"
                   placeholder="Reference..."
@@ -198,7 +202,7 @@ export default function TransactionsPage() {
 
       {isEmpty && (
         <div className="text-center py-12">
-          <p className="text-neutral">No transactions found.</p>
+          <p className="text-muted-foreground">No transactions found.</p>
         </div>
       )}
 
@@ -208,7 +212,7 @@ export default function TransactionsPage() {
             <CardContent className="p-0">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-border text-left text-neutral">
+                  <tr className="border-b border-border text-left text-muted-foreground">
                     <th className="py-3 px-4">Reference</th>
                     <th className="py-3 px-4">Type</th>
                     <th className="py-3 px-4">Amount</th>
@@ -218,10 +222,14 @@ export default function TransactionsPage() {
                 </thead>
                 <tbody>
                   {currentPageItems.map((tx) => (
-                    <tr key={tx.transactionId} className="border-b border-border hover:bg-primary/5">
+                    <tr key={tx.transactionId} className="border-b border-border hover:bg-muted/50">
                       <td className="py-3 px-4 font-mono text-xs">{tx.reference}</td>
                       <td className="py-3 px-4">{tx.type}</td>
-                      <td className="py-3 px-4 font-semibold">NGN {Math.abs(tx.amount).toFixed(2)}</td>
+                      <td className="py-3 px-4 font-semibold">
+                        <span className={tx.amount > 0 ? 'text-success' : 'text-destructive'}>
+                          NGN {Math.abs(tx.amount).toFixed(2)}
+                        </span>
+                      </td>
                       <td className="py-3 px-4">
                         <span
                           className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
@@ -231,7 +239,7 @@ export default function TransactionsPage() {
                           {tx.status}
                         </span>
                       </td>
-                      <td className="py-3 px-4 text-neutral">{new Date(tx.createdAt).toLocaleDateString()}</td>
+                      <td className="py-3 px-4 text-muted-foreground">{new Date(tx.createdAt).toLocaleDateString()}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -249,7 +257,7 @@ export default function TransactionsPage() {
             >
               <ChevronLeft className="h-4 w-4 mr-1" /> Previous
             </Button>
-            <span className="text-sm text-neutral">
+            <span className="text-sm text-muted-foreground">
               Page {history.length} {isFetching && '(loading...)'}
             </span>
             <Button
