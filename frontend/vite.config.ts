@@ -14,12 +14,12 @@ export default defineConfig({
     port: 3000,              // frontend port
     proxy: {
       '/api': {
-        target: 'https://localhost:8081',  
+        target: 'https://naira-ledger-engine-1.onrender.com',  
         changeOrigin: true,
         secure: false,                     
       },
       '/hubs': {
-        target: 'https://localhost:8081',
+        target: 'https://naira-ledger-engine-1.onrender.com',
         ws: true,                          
         changeOrigin: true,
         secure: false,

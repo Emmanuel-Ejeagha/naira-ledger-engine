@@ -28,6 +28,9 @@ const config: Config = {
         "accent-foreground": "var(--accent-foreground)",
 
         destructive: "var(--destructive)",
+        success: "var(--success)",
+        warning: "var(--warning)",
+        info: "var(--info)",
 
         border: "var(--border)",
         input: "var(--input)",
