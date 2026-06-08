@@ -1,4 +1,7 @@
-﻿namespace NairaLedger.WebApi.Endpoints;
+﻿using NairaLedger.Domain.ValueObjects;
+using System.Security.Claims;
+
+namespace NairaLedger.WebApi.Endpoints;
 
 public static class WalletEndpoints
 {
@@ -37,6 +40,35 @@ public static class WalletEndpoints
         .Produces(200)
         .Produces(404);
 
+        walletGroup.MapGet("/me", async (
+            IWalletRepository walletRepo,
+            IHttpContextAccessor httpContextAccessor,
+            IUserService userService) =>
+                {
+                    var userIdClaim = httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                    if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+                        return Results.Unauthorized();
+
+                    var wallet = await walletRepo.GetByUserIdAsync(new UserId(userId));
+                    if (wallet is null)
+                        return Results.NotFound(new { error = "No wallet found. Please create one first." });
+
+                    return Results.Ok(new
+                    {
+                        wallet.Id,
+                        wallet.UserId,
+                        wallet.Tag,
+                        wallet.KycLevel,
+                        wallet.IsActive,
+                        wallet.CreatedAt
+                    });
+                })
+        .WithSummary("Get current user's wallet")
+        .WithDescription("Returns the wallet belonging to the authenticated user.")
+        .Produces(200)
+        .Produces(401)
+        .RequireAuthorization();
+
         walletGroup.MapGet("/{walletId:guid}/balance", async (Guid walletId, IMediator mediator) =>
         {
             var result = await mediator.Send(new GetWalletBalanceQuery(walletId));
@@ -58,5 +90,6 @@ public static class WalletEndpoints
         .Produces<InitiateFundingResponse>(200)
         .ProducesProblem(400)
         .RequireRateLimiting("moderate");
+
     }
 }

@@ -1,9 +1,9 @@
 import { NavLink } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
-import { LogOut, LayoutDashboard, Wallet, ArrowRightLeft, History, ShieldCheck, Bell, QrCode, Settings } from 'lucide-react';
+import { LogOut, LayoutDashboard, Wallet, ArrowRightLeft, History, ShieldCheck, Bell, QrCode, Settings, ShieldAlert } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const links = [
+const userLinks = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/wallet', label: 'Wallet', icon: Wallet },
   { to: '/fund', label: 'Fund', icon: ArrowRightLeft },
@@ -15,8 +15,14 @@ const links = [
   { to: '/settings', label: 'Settings', icon: Settings },
 ];
 
+const adminLinks = [
+  { to: '/admin/kyc', label: 'KYC Approval', icon: ShieldAlert },
+  { to: '/admin/reversal', label: 'Reversal', icon: History },
+];
+
 export default function Sidebar() {
   const logout = useAuthStore((s) => s.logout);
+  const isAdmin = useAuthStore((s) => s.roles.includes('Admin'));  const links = [...userLinks, ...(isAdmin ? adminLinks : [])];
 
   return (
     <aside className="w-60 bg-primary text-white flex flex-col p-4">

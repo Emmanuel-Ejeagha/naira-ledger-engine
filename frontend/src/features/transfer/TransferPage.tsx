@@ -10,9 +10,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { CheckCircle, ArrowLeftRight } from 'lucide-react';
-import { useAuthStore } from '../../stores/authStore';
+import { useAuthStore } from '@/stores/authStore';
 
 type Step = 'form' | 'confirm' | 'receipt';
 
@@ -22,7 +23,7 @@ export default function TransferPage() {
   const [step, setStep] = useState<Step>('form');
   const [formData, setFormData] = useState<TransferFormData | null>(null);
   const [transactionId, setTransactionId] = useState<string | null>(null);
-  const [reversalWindow, setReversalWindow] = useState<boolean>(false); // indicate if within 30 min
+  const [reversalWindow, setReversalWindow] = useState<boolean>(false);
 
   const {
     register,
@@ -31,13 +32,18 @@ export default function TransferPage() {
     reset,
   } = useForm<TransferFormData>({
     resolver: zodResolver(transferSchema),
+    defaultValues: {
+      fromWalletId: walletId ?? '',
+      toWalletId: '',
+      amount: undefined,
+    },
   });
 
   const transferMutation = useMutation({
-    mutationFn: (data: TransferFormData) => executeTransfer(data),
+    mutationFn: (data: TransferFormData) => executeTransfer(data as TransferRequest),
     onSuccess: (data) => {
       setTransactionId(data.transactionId);
-      setReversalWindow(true); // assume fresh transfer is reversible for 30 min
+      setReversalWindow(true);
       setStep('receipt');
       toast.success('Transfer completed');
     },
@@ -48,7 +54,8 @@ export default function TransferPage() {
   });
 
   const onSubmit = (data: TransferFormData) => {
-    setFormData(data);
+    const idempotencyKey = crypto.randomUUID();
+    setFormData({ ...data, idempotencyKey });
     setStep('confirm');
   };
 
@@ -61,8 +68,17 @@ export default function TransferPage() {
     setFormData(null);
   };
 
-  // Show reversal eligibility based on time (simplified)
   const isReversible = reversalWindow && step === 'receipt';
+
+  // Guard: show skeleton until wallet ID is loaded
+  if (!walletId) {
+    return (
+      <div className="max-w-lg space-y-6">
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-32 w-full" />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-lg space-y-6">
@@ -80,8 +96,8 @@ export default function TransferPage() {
                 <Input
                   id="fromWalletId"
                   value={walletId}
-                  disabled
-                  {...register('fromWalletId')}
+                  readOnly
+                  className="bg-muted"
                 />
               </div>
               <div className="space-y-2">
@@ -91,7 +107,9 @@ export default function TransferPage() {
                   placeholder="Recipient's wallet ID"
                   {...register('toWalletId')}
                 />
-                {errors.toWalletId && <p className="text-sm text-danger">{errors.toWalletId.message}</p>}
+                {errors.toWalletId && (
+                  <p className="text-sm text-destructive">{errors.toWalletId.message}</p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="amount">Amount (NGN)</Label>
@@ -101,21 +119,18 @@ export default function TransferPage() {
                   placeholder="1000"
                   {...register('amount', { valueAsNumber: true })}
                 />
-                {errors.amount && <p className="text-sm text-danger">{errors.amount.message}</p>}
+                {errors.amount && (
+                  <p className="text-sm text-destructive">{errors.amount.message}</p>
+                )}
                 {balance && (
-                  <p className="text-xs text-neutral">Balance: NGN {balance.balance.toFixed(2)}</p>
+                  <p className="text-xs text-muted-foreground">
+                    Balance: NGN {balance.balance.toFixed(2)}
+                  </p>
                 )}
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="idempotencyKey">Idempotency Key</Label>
-                <Input
-                  id="idempotencyKey"
-                  placeholder="Unique key for this transfer"
-                  {...register('idempotencyKey')}
-                />
-                {errors.idempotencyKey && <p className="text-sm text-danger">{errors.idempotencyKey.message}</p>}
-              </div>
-              <Button type="submit" className="w-full">Review Transfer</Button>
+              <Button type="submit" className="w-full">
+                Review Transfer
+              </Button>
             </form>
           </CardContent>
         </Card>
@@ -128,13 +143,13 @@ export default function TransferPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <dl className="grid grid-cols-2 gap-2 text-sm">
-              <dt className="text-neutral">From</dt>
+              <dt className="text-muted-foreground">From</dt>
               <dd className="font-mono text-xs">{formData.fromWalletId}</dd>
-              <dt className="text-neutral">To</dt>
+              <dt className="text-muted-foreground">To</dt>
               <dd className="font-mono text-xs">{formData.toWalletId}</dd>
-              <dt className="text-neutral">Amount</dt>
+              <dt className="text-muted-foreground">Amount</dt>
               <dd className="font-semibold">NGN {formData.amount.toFixed(2)}</dd>
-              <dt className="text-neutral">Key</dt>
+              <dt className="text-muted-foreground">Key</dt>
               <dd className="text-xs">{formData.idempotencyKey}</dd>
             </dl>
             <Alert>
@@ -169,13 +184,13 @@ export default function TransferPage() {
               <span className="font-medium">Transaction completed</span>
             </div>
             <dl className="grid grid-cols-2 gap-2 text-sm">
-              <dt className="text-neutral">Transaction ID</dt>
+              <dt className="text-muted-foreground">Transaction ID</dt>
               <dd className="font-mono text-xs">{transactionId}</dd>
               {formData && (
                 <>
-                  <dt className="text-neutral">Amount</dt>
+                  <dt className="text-muted-foreground">Amount</dt>
                   <dd>NGN {formData.amount.toFixed(2)}</dd>
-                  <dt className="text-neutral">To</dt>
+                  <dt className="text-muted-foreground">To</dt>
                   <dd className="font-mono text-xs">{formData.toWalletId}</dd>
                 </>
               )}
@@ -189,7 +204,13 @@ export default function TransferPage() {
                 </div>
               )}
             </dl>
-            <Button onClick={() => { setStep('form'); reset(); }} className="w-full">
+            <Button
+              onClick={() => {
+                setStep('form');
+                reset();
+              }}
+              className="w-full"
+            >
               New Transfer
             </Button>
           </CardContent>

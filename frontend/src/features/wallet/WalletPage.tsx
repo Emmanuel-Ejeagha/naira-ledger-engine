@@ -21,6 +21,13 @@ export default function WalletPage() {
     enabled: !!walletId,
   });
 
+  const kycLabels: Record<number, string> = {
+  0: 'Unverified',
+  1: 'Tier1',
+  2: 'Tier2',
+  3: 'Tier3',
+}
+
   const { data: balance, isLoading: balanceLoading } = useWalletBalance(walletId);
 
   const handleCopyTag = () => {
@@ -62,7 +69,7 @@ export default function WalletPage() {
             <div>
               <span className="text-sm text-neutral">Tag</span>
               <div className="flex items-center gap-2 mt-1">
-                <Input value={wallet.tag ?? 'No tag'} readOnly className="max-w-xs" />
+                <Input value={wallet.tag?.value ?? wallet.tag ?? 'No tag'} readOnly className="max-w-xs" />
                 <Button variant="outline" size="icon" onClick={handleCopyTag}>
                   {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                 </Button>
@@ -70,7 +77,7 @@ export default function WalletPage() {
             </div>
             <div>
               <span className="text-sm text-neutral">KYC Level</span>
-              <p className="font-medium">{wallet.kycLevel}</p>
+              <p className="font-medium">{kycLabels[wallet.kycLevel as number] || 'Unknown'}</p>
             </div>
             <div>
               <span className="text-sm text-neutral">Status</span>
@@ -90,9 +97,9 @@ export default function WalletPage() {
             <CardTitle>Balance</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-4xl font-bold text-primary-900">
-              NGN {balance?.balance?.toFixed(2) ?? '0.00'}
-            </p>
+            <span className="text-4xl font-bold text-success">
+  NGN {balance?.balance.toFixed(2) ?? '0.00'}
+</span>
             <p className="text-xs text-neutral mt-2">Real-time balance</p>
           </CardContent>
         </Card>

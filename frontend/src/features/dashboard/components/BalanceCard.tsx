@@ -4,9 +4,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 interface BalanceCardProps {
   balance: number | undefined;
   isLoading: boolean;
+  label?: string;
 }
 
-export default function BalanceCard({ balance, isLoading }: BalanceCardProps) {
+export default function BalanceCard({ balance, isLoading, label = 'Available Balance' }: BalanceCardProps) {
   if (isLoading) {
     return (
       <Card className="p-6">
@@ -19,14 +20,18 @@ export default function BalanceCard({ balance, isLoading }: BalanceCardProps) {
     );
   }
 
+  const balanceColor = balance && balance > 0 ? 'text-success' : 'text-foreground';
+
   return (
-    <Card className="p-6">
+    <Card className="p-6 border-l-4 border-success">
       <CardContent className="flex flex-col space-y-2">
-        <span className="text-sm font-medium text-neutral">Available Balance</span>
-        <span className="text-4xl font-bold text-primary-900">
+        <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+          {label}
+        </span>
+        <span className={`text-4xl font-bold ${balanceColor}`}>
           NGN {balance?.toFixed(2) ?? '0.00'}
         </span>
-        <span className="text-xs text-neutral">Updated in real-time</span>
+        <span className="text-xs text-muted-foreground">Updated in real-time</span>
       </CardContent>
     </Card>
   );

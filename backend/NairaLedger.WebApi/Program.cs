@@ -160,6 +160,7 @@ app.MapKycEndpoints();
 app.MapTransferEndpoints();
 app.MapTransactionEndpoints();
 app.MapWebhookEndpoints();
+app.MapAdminEndpoints();
 
 // ── SignalR Hub ─────────────────────────────────────
 app.MapHub<NotificationHub>("/hubs/notifications");

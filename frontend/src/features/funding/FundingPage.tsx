@@ -14,6 +14,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { CheckCircle, XCircle, ExternalLink, Loader2 } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
+import BalanceCard from '../dashboard/components/BalanceCard';
 
 export default function FundingPage() {
   const walletId = useAuthStore((s) => s.walletId);
@@ -98,12 +99,7 @@ export default function FundingPage() {
       {balanceLoading ? (
         <Skeleton className="h-16 w-full" />
       ) : (
-        <Card>
-          <CardContent className="py-4">
-            <span className="text-sm text-neutral">Current Balance</span>
-            <p className="text-2xl font-bold">NGN {balance?.balance.toFixed(2) || '0.00'}</p>
-          </CardContent>
-        </Card>
+        <BalanceCard balance={balance?.balance} isLoading={balanceLoading} label="Current Balance" />
       )}
 
       {/* Funding Form */}
