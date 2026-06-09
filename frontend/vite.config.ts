@@ -16,13 +16,13 @@ export default defineConfig({
       '/api': {
         target: 'https://localhost:8081',  
         changeOrigin: true,
-        secure: false,                     
+        secure: true,                     
       },
       '/hubs': {
         target: 'https://localhost:8081',
         ws: true,                          
         changeOrigin: true,
-        secure: false,
+        secure: true,
       },
     },
   },
