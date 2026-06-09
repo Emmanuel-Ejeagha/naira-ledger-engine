@@ -9,10 +9,25 @@ public class RedisRefreshTokenStore : IRefreshTokenStore
 
     public async Task StoreAsync(string token, Guid userId, DateTime expiresAt, CancellationToken cancellationToken)
     {
-        var db = _redis.GetDatabase();
-        var key = $"{Prefix}{token}";
-        var entry = $"{userId}|{expiresAt:O}";
-        await db.StringSetAsync(key, entry, expiry: expiresAt - DateTime.UtcNow);
+        try
+        {
+            var db = _redis.GetDatabase();
+            var key = $"{Prefix}{token}";
+            var entry = $"{userId}|{expiresAt:O}";
+
+            var expiry = expiresAt - DateTime.UtcNow;
+            if (expiry <= TimeSpan.Zero)
+            {
+                throw new ArgumentException("Token expiry must be in the future");
+            }
+
+            await db.StringSetAsync(key, entry, expiry);
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine($"Redis StoreAsync failed: {ex.Message}");
+            throw; 
+        }
     }
 
     public async Task<Guid?> ValidateAsync(string token, CancellationToken cancellationToken)
@@ -20,6 +35,7 @@ public class RedisRefreshTokenStore : IRefreshTokenStore
         var db = _redis.GetDatabase();
         var key = $"{Prefix}{token}";
         var value = await db.StringGetAsync(key);
+
         if (value.IsNullOrEmpty) return null;
 
         var parts = value.ToString().Split('|');
