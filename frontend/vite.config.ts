@@ -16,13 +16,13 @@ export default defineConfig({
       '/api': {
         target: 'https://naira-ledger-engine-1.onrender.com',  
         changeOrigin: true,
-        secure: false,                     
+        secure: true,                     
       },
       '/hubs': {
         target: 'https://naira-ledger-engine-1.onrender.com',
         ws: true,                          
         changeOrigin: true,
-        secure: false,
+        secure: true,
       },
     },
   },

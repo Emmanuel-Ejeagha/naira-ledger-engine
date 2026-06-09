@@ -26,7 +26,16 @@ public static class DependencyInjection
 
         // Redis
         var redisConnection = configuration["Redis:ConnectionString"] ?? "localhost:6379";
-        services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConnection));
+        
+            var options = ConfigurationOptions.Parse(redisConnection);
+            options.AbortOnConnectFail = false;
+            options.ConnectTimeout = 15000;
+            options.SyncTimeout = 10000;
+            options.Ssl = true;
+            options.Password = null;
+
+            var multiplexer = ConnectionMultiplexer.Connect(options);
+            services.AddSingleton<IConnectionMultiplexer>(multiplexer);
 
         // Hangfire
         services.AddHangfire(config =>
