@@ -2,6 +2,10 @@
 
 public static class DependencyInjection
 {
+    private static Lazy<IConnectionMultiplexer> _lazyConnection;
+
+    public static IConnectionMultiplexer Connection => _lazyConnection.Value;
+
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection")
@@ -25,17 +29,28 @@ public static class DependencyInjection
         .AddDefaultTokenProviders();
 
         // Redis
-        var redisConnection = configuration["Redis:ConnectionString"] ?? "localhost:6379";
-        
-            var options = ConfigurationOptions.Parse(redisConnection);
+        _lazyConnection = new Lazy<IConnectionMultiplexer>(() =>
+        {
+            var redisConnection = configuration["Redis__ConnectionString"]
+                   ?? configuration["Redis:ConnectionString"]
+                   ?? "localhost:6379";
+
+            if (string.IsNullOrEmpty(redisConnection) || redisConnection.Contains("localhost"))
+            {
+                throw new InvalidOperationException("Redis connection string is missing or invalid.");
+            }
+
+            var options = ConfigurationOptions.Parse(redisConnection, true);
             options.AbortOnConnectFail = false;
             options.ConnectTimeout = 15000;
             options.SyncTimeout = 10000;
             options.Ssl = true;
-            options.Password = null;
+            options.SslProtocols = System.Security.Authentication.SslProtocols.Tls12 | System.Security.Authentication.SslProtocols.Tls13;
 
-            var multiplexer = ConnectionMultiplexer.Connect(options);
-            services.AddSingleton<IConnectionMultiplexer>(multiplexer);
+            return ConnectionMultiplexer.Connect(options);
+
+        });
+        services.AddSingleton<IConnectionMultiplexer>(_ => _lazyConnection.Value);
 
         // Hangfire
         services.AddHangfire(config =>
