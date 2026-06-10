@@ -39,5 +39,15 @@ public static class AuthEndpoints
         .Produces<LoginUserResponse>(200)
         .ProducesProblem(401)
         .RequireRateLimiting("strict");
+
+        authGroup.MapPost("/change-password", [Authorize] async (ChangePasswordCommand command, IMediator mediator) =>
+        {
+            await mediator.Send(command);
+            return Results.Ok(new { message = "Password changed successfully." });
+        })
+        .WithSummary("Change password")
+        .WithDescription("Changes the password for the currently authenticated user.")
+        .Produces(200)
+        .ProducesProblem(400);
     }
 }

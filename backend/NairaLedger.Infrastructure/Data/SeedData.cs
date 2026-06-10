@@ -37,6 +37,15 @@ public static class SeedData
                 throw new InvalidOperationException($"Failed to assign Admin role: {string.Join(", ", roleResult.Errors)}");
         }
 
+        // Create a wallet for the admin (if not exists)
+        var adminWallet = await context.Wallets.FirstOrDefaultAsync(w => w.UserId == new UserId(admin.Id));
+        if (adminWallet is null)
+        {
+            adminWallet = new Wallet(new UserId(admin.Id), new WalletTag("Admin Wallet"));
+            context.Wallets.Add(adminWallet);
+            await context.SaveChangesAsync();
+        }
+
         var systemEmail = "system@nairawallet.ng";
         var systemUser = await userManager.FindByEmailAsync(systemEmail);
         if (systemUser is null)

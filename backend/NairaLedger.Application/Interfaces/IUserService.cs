@@ -28,6 +28,8 @@ public interface IUserService
 
     Task VerifyEmailAsync(string email, string token, CancellationToken cancellationToken = default);
 
+    Task ChangePasswordAsync(Guid userId, string currentPassword, string newPassword, CancellationToken cancellationToken = default);
+
     /// <summary>
     /// Returns a list of role names for the given user.
     /// </summary>

@@ -6,6 +6,9 @@ export interface PendingKycWallet {
   tag: string | null;
   kycLevel: string;
   createdAt: string;
+  kycFullName?: string;
+  kycIdNumber?: string;
+  kycIdType?: string;
 }
 
 export const getPendingKycWallets = () =>
