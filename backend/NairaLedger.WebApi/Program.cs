@@ -27,11 +27,11 @@ builder.Services.AddSwaggerGen(options =>
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Enter your JWT token WITHOUT the 'Bearer' prefix"
+        Description = "Enter your JWT token **WITHOUT** the 'Bearer' prefix – it will be added automatically."
     });
 
     options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
@@ -63,6 +63,9 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret))
+        {
+            KeyId = "NairaLedgerSigningKey"
+        }
     };
     options.Events = new JwtBearerEvents
     {

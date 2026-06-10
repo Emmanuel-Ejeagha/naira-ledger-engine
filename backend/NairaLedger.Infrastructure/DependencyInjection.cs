@@ -2,10 +2,6 @@
 
 public static class DependencyInjection
 {
-    private static Lazy<IConnectionMultiplexer> _redisLazy = null;
-
-    public static IConnectionMultiplexer Connection => _redisLazy.Value;
-
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection")
@@ -29,47 +25,52 @@ public static class DependencyInjection
         .AddDefaultTokenProviders();
 
         // Redis
-        _redisLazy = new Lazy<IConnectionMultiplexer>(() =>
+        var env = configuration["ASPNETCORE_ENVIRONMENT"] ?? "Production";
+        var redisConnection = configuration["Redis:ConnectionString"] ?? "localhost:6379";
+        if (env == "Development")
         {
-            var redisConnection = configuration["Redis__ConnectionString"]
-                   ?? configuration["Redis:ConnectionString"]
-                   ?? "localhost:6379"
-                   ?? throw new InvalidOperationException("Redis connection string not found!");
-
-            if (string.IsNullOrWhiteSpace(redisConnection))
-                throw new InvalidOperationException("Redis connection string is missing or invalid.");
-
-            var uri = new Uri(redisConnection);
-            var password = uri.UserInfo.Split(':').LastOrDefault() ?? "";
-            var host = uri.Host;
-            var port = uri.Port;
-
-            var options = new ConfigurationOptions
+            services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisConnection));
+        }
+        else
+        {
+            var lazyRedis = new Lazy<IConnectionMultiplexer>(() =>
             {
-                EndPoints = { { host, port } },
-                Password = password,
-                Ssl = true,
-                SslProtocols = System.Security.Authentication.SslProtocols.Tls12 | System.Security.Authentication.SslProtocols.Tls13,
-                AbortOnConnectFail = false,
-                ConnectTimeout = 20000,
-                SyncTimeout = 15000,
-                AsyncTimeout = 15000,
-                KeepAlive = 60,
-                ReconnectRetryPolicy = new LinearRetry(5000)
-            };
+                if (string.IsNullOrWhiteSpace(redisConnection))
+                    throw new InvalidOperationException("Redis connection string is missing or invalid.");
 
-            
-            var multiplexer = ConnectionMultiplexer.Connect(options);
+                var uri = new Uri(redisConnection);
+                var password = uri.UserInfo.Split(':').LastOrDefault() ?? "";
+                var host = uri.Host;
+                var port = uri.Port;
 
-            multiplexer.ErrorMessage += (sender, args) =>
-                Console.Error.WriteLine($"Redis error: {args.Message}");
-            multiplexer.ConnectionFailed += (sender, args) =>
-                Console.Error.WriteLine($"Redis connection failed: {args.Exception?.Message}");
-            Console.WriteLine($"Redis connected: {multiplexer.IsConnected} to {host}:{port}");
+                var options = new ConfigurationOptions
+                {
+                    EndPoints = { { host, port } },
+                    Password = password,
+                    Ssl = true,
+                    SslProtocols = System.Security.Authentication.SslProtocols.Tls12
+                             | System.Security.Authentication.SslProtocols.Tls13,
+                    AbortOnConnectFail = false,
+                    ConnectTimeout = 20000,
+                    SyncTimeout = 15000,
+                    AsyncTimeout = 15000,
+                    KeepAlive = 60,
+                    ReconnectRetryPolicy = new LinearRetry(5000)
+                };
 
-            return multiplexer;
-        });
-        services.AddSingleton<IConnectionMultiplexer>(_ => _redisLazy.Value);
+                var multiplexer = ConnectionMultiplexer.Connect(options);
+
+                multiplexer.ErrorMessage += (sender, args) =>
+                    Console.Error.WriteLine($"Redis error: {args.Message}");
+                multiplexer.ConnectionFailed += (sender, args) =>
+                    Console.Error.WriteLine($"Redis connection failed: {args.Exception?.Message}");
+
+                Console.WriteLine($"Redis connected: {multiplexer.IsConnected} to {host}:{port}");
+                return multiplexer;
+            });
+
+            services.AddSingleton<IConnectionMultiplexer>(_ => lazyRedis.Value);
+    }
 
         // Hangfire
         services.AddHangfire(config =>
