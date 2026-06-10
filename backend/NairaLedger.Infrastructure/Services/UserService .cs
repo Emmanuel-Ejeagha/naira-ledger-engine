@@ -90,4 +90,13 @@ public class UserService : IUserService
         if (!result.Succeeded)
             throw new InvalidOperationException($"Failed to add user to role: {string.Join(", ", result.Errors.Select(e => e.Description))}");
     }
+
+    public async Task ChangePasswordAsync(Guid userId, string currentPassword, string newPassword, CancellationToken cancellationToken)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        if (user is null) throw new UnauthorizedAccessException();
+        var result = await _userManager.ChangePasswordAsync(user, currentPassword, newPassword);
+        if (!result.Succeeded)
+            throw new InvalidOperationException($"Password change failed: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+    }
 }

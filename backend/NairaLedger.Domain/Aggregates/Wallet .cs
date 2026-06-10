@@ -24,6 +24,21 @@ public class Wallet : AggregateRoot
     public KycLevel KycLevel { get; private set; } = KycLevel.Unverified;
 
     /// <summary>
+    /// Full name submitted during KYC.
+    /// </summary>
+    public string? KycFullName { get; private set; }
+
+    /// <summary>
+    /// ID number submitted during KYC.
+    /// </summary>
+    public string? KycIdNumber { get; private set; }
+
+    /// <summary>
+    /// Type of ID submitted (e.g., National ID, Passport).
+    /// </summary>
+    public string? KycIdType { get; private set; }
+
+    /// <summary>
     /// Indicates whether the wallet is currently active. 
     /// </summary>
     public bool IsActive { get; private set; } = true;
@@ -105,5 +120,17 @@ public class Wallet : AggregateRoot
     private void UpdateVersion()
     {
         Version = Guid.NewGuid();
+    }
+
+    public void SubmitKyc(string fullName, string idNumber, string idType)
+    {
+        if (KycLevel != KycLevel.Unverified)
+            throw new InvalidOperationException("KYC has already been submitted.");
+
+        KycFullName = fullName;
+        KycIdNumber = idNumber;
+        KycIdType = idType;
+        KycLevel = KycLevel.Tier1;
+        UpdateVersion();
     }
 }

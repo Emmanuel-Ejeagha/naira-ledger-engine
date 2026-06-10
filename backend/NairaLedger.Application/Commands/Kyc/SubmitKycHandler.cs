@@ -16,7 +16,7 @@ public class SubmitKycHandler : IRequestHandler<SubmitKycCommand, Unit>
         var wallet = await _walletRepo.GetByIdAsync(request.WalletId, cancellationToken);
         if (wallet is null) throw new InvalidOperationException("Wallet not found.");
 
-        wallet.VerifyKyc(KycLevel.Tier1);
+        wallet.SubmitKyc(request.FullName, request.IdNumber, request.IdType);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
         return Unit.Value;
     }

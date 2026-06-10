@@ -1,4 +1,7 @@
-﻿namespace NairaLedger.WebApi.Endpoints;
+﻿using NairaLedger.Domain.Enums;
+using NairaLedger.Infrastructure.Persistence;
+
+namespace NairaLedger.WebApi.Endpoints;
 
 public static class KycEndpoints
 {
@@ -27,5 +30,23 @@ public static class KycEndpoints
         .Produces(200)
         .ProducesProblem(403)
         .RequireRateLimiting("strict");
+
+        kycGroup.MapGet("/pending", async (NairaLedgerDbContext db) =>
+        {
+            var wallets = await db.Wallets
+                .Where(w => w.KycLevel == KycLevel.Tier1)
+                .Select(w => new {
+                    w.Id,
+                    w.UserId,
+                    Tag = w.Tag != null ? w.Tag.Value : null,
+                    w.KycLevel,
+                    w.CreatedAt,
+                    KycFullName = w.KycFullName,
+                    KycIdNumber = w.KycIdNumber,
+                    KycIdType = w.KycIdType
+                })
+                .ToListAsync();
+            return Results.Ok(wallets);
+        });
     }
 }
