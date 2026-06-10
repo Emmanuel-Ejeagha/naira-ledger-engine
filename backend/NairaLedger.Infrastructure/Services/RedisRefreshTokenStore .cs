@@ -17,16 +17,14 @@ public class RedisRefreshTokenStore : IRefreshTokenStore
 
             var expiry = expiresAt - DateTime.UtcNow;
             if (expiry <= TimeSpan.Zero)
-            {
                 throw new ArgumentException("Token expiry must be in the future");
-            }
 
             await db.StringSetAsync(key, entry, expiry);
         }
-        catch (Exception ex)
+        catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            Console.Error.WriteLine($"Redis StoreAsync failed: {ex.Message}");
-            throw; 
+            Console.Error.WriteLine($"[Redis] StoreAsync failed for token {token.Substring(0, 8)}...: {ex.GetType().Name} - {ex.Message}");
+            throw;
         }
     }
 
