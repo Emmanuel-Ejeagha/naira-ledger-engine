@@ -33,31 +33,39 @@ public static class DependencyInjection
         {
             var redisConnection = configuration["Redis__ConnectionString"]
                    ?? configuration["Redis:ConnectionString"]
-                   ?? "localhost:6379";
+                   ?? "localhost:6379"
+                   ?? throw new InvalidOperationException("Redis connection string not found!");
 
             if (string.IsNullOrWhiteSpace(redisConnection))
                 throw new InvalidOperationException("Redis connection string is missing or invalid.");
 
-            var options = ConfigurationOptions.Parse(redisConnection, true);
+            var uri = new Uri(redisConnection);
+            var password = uri.UserInfo.Split(':').LastOrDefault() ?? "";
+            var host = uri.Host;
+            var port = uri.Port;
 
-            options.AbortOnConnectFail = false;
+            var options = new ConfigurationOptions
+            {
+                EndPoints = { { host, port } },
+                Password = password,
+                Ssl = true,
+                SslProtocols = System.Security.Authentication.SslProtocols.Tls12 | System.Security.Authentication.SslProtocols.Tls13,
+                AbortOnConnectFail = false,
+                ConnectTimeout = 20000,
+                SyncTimeout = 15000,
+                AsyncTimeout = 15000,
+                KeepAlive = 60,
+                ReconnectRetryPolicy = new LinearRetry(5000)
+            };
 
-            options.AbortOnConnectFail = false;
-            options.ConnectTimeout = 20000;
-            options.SyncTimeout = 15000;
-            options.AsyncTimeout = 15000;
-            options.Ssl = true;
-            options.SslProtocols = System.Security.Authentication.SslProtocols.Tls12
-                                 | System.Security.Authentication.SslProtocols.Tls13;
-            options.ReconnectRetryPolicy = new LinearRetry(5000); 
-            options.KeepAlive = 60;
-
+            
             var multiplexer = ConnectionMultiplexer.Connect(options);
 
             multiplexer.ErrorMessage += (sender, args) =>
                 Console.Error.WriteLine($"Redis error: {args.Message}");
             multiplexer.ConnectionFailed += (sender, args) =>
                 Console.Error.WriteLine($"Redis connection failed: {args.Exception?.Message}");
+            Console.WriteLine($"Redis connected: {multiplexer.IsConnected} to {host}:{port}");
 
             return multiplexer;
         });
