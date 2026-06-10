@@ -96,6 +96,7 @@ export default function TransferPage() {
                 <Input
                   id="fromWalletId"
                   value={walletId}
+                  {...register('fromWalletId')}
                   readOnly
                   className="bg-muted"
                 />
