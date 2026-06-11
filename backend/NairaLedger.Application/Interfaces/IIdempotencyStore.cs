@@ -9,12 +9,12 @@ public interface IIdempotencyStore
     /// Checks whether the given idempotency key has already been processed.
     /// Returns the stored response if found, otherwise null.
     /// </summary>
-    Task<IdempotentResponse?> GetResponseAsync(IdempotencyKey key, CancellationToken cancellationToken);
+    Task<IdempotentResponse?> GetResponseAsync(string key, CancellationToken cancellationToken);
 
     /// <summary>
     /// Stores the response for a newly processed idempotency key.
     /// </summary>
-    Task StoreResponseAsync(IdempotencyKey key, IdempotentResponse response, CancellationToken cancellationToken);
+    Task StoreResponseAsync(string key, IdempotentResponse response, CancellationToken cancellationToken);
 }
 
 /// <summary>
