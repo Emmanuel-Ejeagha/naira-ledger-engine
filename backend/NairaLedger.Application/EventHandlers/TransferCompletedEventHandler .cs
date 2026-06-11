@@ -1,10 +1,4 @@
-﻿using MediatR;
-using Microsoft.Extensions.Logging;
-using NairaLedger.Application.Interfaces;
-using NairaLedger.Domain.DomainEvents;
-using NairaLedger.Domain.Interfaces;
-
-namespace NairaLedger.Application.EventHandlers;
+﻿namespace NairaLedger.Application.EventHandlers;
 
 public class TransferCompletedEventHandler : INotificationHandler<DomainEventNotification<TransferCompletedEvent>>
 {
