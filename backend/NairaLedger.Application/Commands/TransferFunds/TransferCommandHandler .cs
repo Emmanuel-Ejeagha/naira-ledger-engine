@@ -1,13 +1,11 @@
 ﻿namespace NairaLedger.Application.Commands.TransferFunds;
 
-/// <summary>
-/// Handles P2P transfers with balance validation and double‑entry posting.
-/// </summary>
 public class TransferCommandHandler : IRequestHandler<TransferCommand, TransferResponse>
 {
     private readonly IWalletRepository _walletRepository;
     private readonly ITransactionRepository _transactionRepository;
     private readonly ILedgerQueryService _ledgerQueryService;
+    private readonly INotificationService _notificationService;   
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<TransferCommandHandler> _logger;
 
@@ -15,12 +13,14 @@ public class TransferCommandHandler : IRequestHandler<TransferCommand, TransferR
         IWalletRepository walletRepository,
         ITransactionRepository transactionRepository,
         ILedgerQueryService ledgerQueryService,
+        INotificationService notificationService,   
         IUnitOfWork unitOfWork,
         ILogger<TransferCommandHandler> logger)
     {
         _walletRepository = walletRepository;
         _transactionRepository = transactionRepository;
         _ledgerQueryService = ledgerQueryService;
+        _notificationService = notificationService;   
         _unitOfWork = unitOfWork;
         _logger = logger;
     }
@@ -44,10 +44,10 @@ public class TransferCommandHandler : IRequestHandler<TransferCommand, TransferR
 
         var reference = TransactionReference.Generate();
         var entries = new List<LedgerEntry>
-    {
-        new(request.FromWalletId, request.Amount, LedgerEntryDirection.Debit, "Transfer: debit sender"),
-        new(request.ToWalletId, request.Amount, LedgerEntryDirection.Credit, "Transfer: credit receiver")
-    };
+        {
+            new(request.FromWalletId, request.Amount, LedgerEntryDirection.Debit, "Transfer: debit sender"),
+            new(request.ToWalletId, request.Amount, LedgerEntryDirection.Credit, "Transfer: credit receiver")
+        };
 
         var transaction = new Transaction(reference, TransactionType.Transfer, entries, null);
 
@@ -61,6 +61,9 @@ public class TransferCommandHandler : IRequestHandler<TransferCommand, TransferR
             _logger.LogInformation(
                 "Transfer completed: {Amount} NGN from {From} to {To} (Ref: {Ref})",
                 request.Amount, request.FromWalletId, request.ToWalletId, reference.Value);
+
+            await _notificationService.SendToUserAsync(fromWallet.UserId.Value, "Transfer sent.", cancellationToken);
+            await _notificationService.SendToUserAsync(toWallet.UserId.Value, "Transfer received.", cancellationToken);
 
             return new TransferResponse(transaction.Id, "Transfer completed successfully.");
         }
