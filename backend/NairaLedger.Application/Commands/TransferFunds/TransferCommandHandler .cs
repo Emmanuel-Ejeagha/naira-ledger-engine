@@ -25,26 +25,29 @@ public class TransferCommandHandler : IRequestHandler<TransferCommand, TransferR
         _logger = logger;
     }
 
-    public async Task<TransferResponse> Handle(TransferCommand command, CancellationToken cancellationToken)
+    public async Task<TransferResponse> Handle(TransferCommand request, CancellationToken cancellationToken)
     {
-        var fromWallet = await _walletRepository.GetByIdAsync(command.FromWalletId, cancellationToken);
+        var fromWallet = await _walletRepository.GetByIdAsync(request.FromWalletId, cancellationToken);
         if (fromWallet is null || !fromWallet.IsActive)
-            throw new InvalidOperationException("Sender wallet is invalid or inactive.");
+            throw new InvalidOperationException("Sender wallet not found or inactive.");
 
-        var toWallet = await _walletRepository.GetByIdAsync(command.ToWalletId, cancellationToken);
+        var toWallet = await _walletRepository.GetByIdAsync(request.ToWalletId, cancellationToken);
         if (toWallet is null || !toWallet.IsActive)
-            throw new InvalidOperationException("Recipient wallet is invalid or inactive.");
+            throw new InvalidOperationException("Recipient wallet not found or inactive.");
 
-        var balance = await _ledgerQueryService.GetBalanceAsync(command.FromWalletId, cancellationToken);
-        if (balance < command.Amount)
+        if (fromWallet.Id == toWallet.Id)
+            throw new InvalidOperationException("You cannot transfer to the same wallet.");
+
+        var balance = await _ledgerQueryService.GetBalanceAsync(request.FromWalletId, cancellationToken);
+        if (balance < request.Amount)
             throw new InvalidOperationException("Insufficient funds.");
 
         var reference = TransactionReference.Generate();
         var entries = new List<LedgerEntry>
-        {
-            new(command.FromWalletId, command.Amount, LedgerEntryDirection.Debit, "Transfer: debit sender"),
-            new(command.ToWalletId, command.Amount, LedgerEntryDirection.Credit, "Transfer: credit receiver")
-        };
+    {
+        new(request.FromWalletId, request.Amount, LedgerEntryDirection.Debit, "Transfer: debit sender"),
+        new(request.ToWalletId, request.Amount, LedgerEntryDirection.Credit, "Transfer: credit receiver")
+    };
 
         var transaction = new Transaction(reference, TransactionType.Transfer, entries, null);
 
@@ -57,7 +60,7 @@ public class TransferCommandHandler : IRequestHandler<TransferCommand, TransferR
 
             _logger.LogInformation(
                 "Transfer completed: {Amount} NGN from {From} to {To} (Ref: {Ref})",
-                command.Amount, command.FromWalletId, command.ToWalletId, reference.Value);
+                request.Amount, request.FromWalletId, request.ToWalletId, reference.Value);
 
             return new TransferResponse(transaction.Id, "Transfer completed successfully.");
         }

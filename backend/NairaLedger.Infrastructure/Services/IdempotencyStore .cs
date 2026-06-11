@@ -12,11 +12,11 @@ public class IdempotencyStore : IIdempotencyStore
         _redis = redis;
     }
 
-    public async Task<IdempotentResponse?> GetResponseAsync(IdempotencyKey key, CancellationToken cancellationToken)
+    public async Task<IdempotentResponse?> GetResponseAsync(string key, CancellationToken cancellationToken)
     {
         // Check Redis first
         var db = _redis.GetDatabase();
-        var redisKey = $"{Prefix}{key.Value}";
+        var redisKey = $"{Prefix}{key}";
         var cached = await db.StringGetAsync(redisKey);
         if (!cached.IsNullOrEmpty)
         {
@@ -25,7 +25,7 @@ public class IdempotencyStore : IIdempotencyStore
         }
 
         // Fallback to DB
-        var record = await _context.IdempotencyRecords.FindAsync(new object[] { key.Value }, cancellationToken);
+        var record = await _context.IdempotencyRecords.FindAsync(new object[] { key }, cancellationToken);
         if (record is null) return null;
 
         var deserialized = JsonSerializer.Deserialize<IdempotentResponse>(record.ResponseData);
@@ -33,17 +33,17 @@ public class IdempotencyStore : IIdempotencyStore
         return deserialized;
     }
 
-    public async Task StoreResponseAsync(IdempotencyKey key, IdempotentResponse response, CancellationToken cancellationToken)
+    public async Task StoreResponseAsync(string key, IdempotentResponse response, CancellationToken cancellationToken)
     {
         var record = new IdempotencyRecord
         {
-            Key = key.Value,
+            Key = key,
             ResponseData = JsonSerializer.Serialize(response)
         };
         _context.IdempotencyRecords.Add(record);
 
         var db = _redis.GetDatabase();
-        var redisKey = $"{Prefix}{key.Value}";
+        var redisKey = $"{Prefix}{key}";
         await db.StringSetAsync(redisKey, record.ResponseData, TimeSpan.FromHours(24));
     }
 }

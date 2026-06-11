@@ -6,7 +6,7 @@
 /// <param name="WalletId">Target wallet.</param>
 /// <param name="Amount">NGN amount to credit.</param>
 /// <param name="IdempotencyKey">Unique key to prevent double‑funding.</param>
-public record FundWalletCommand(Guid WalletId, decimal Amount, IdempotencyKey IdempotencyKey)
+public record FundWalletCommand(Guid WalletId, decimal Amount, string IdempotencyKey)
     : IRequest<FundWalletResponse>, IIdempotentCommand;
 
 /// <summary>

@@ -22,10 +22,10 @@ public class IdempotencyBehavior<TRequest, TResponse> : IPipelineBehavior<TReque
         var existing = await _idempotencyStore.GetResponseAsync(key, cancellationToken);
         if (existing is not null)
         {
-            _logger.LogInformation("Idempotency key {Key} already processed. Returning stored result.", key.Value);
+            _logger.LogInformation("Idempotency key {Key} already processed. Returning stored result.", key);
             if (existing.Result is TResponse response)
                 return response;
-            throw new InvalidOperationException($"Stored response type mismatch for idempotency key {key.Value}.");
+            throw new InvalidOperationException($"Stored response type mismatch for idempotency key {key}.");
         }
 
         var result = await next();
