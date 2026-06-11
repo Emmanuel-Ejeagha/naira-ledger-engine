@@ -76,6 +76,8 @@ builder.Services.AddAuthentication(options =>
             if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
             {
                 context.Token = accessToken;
+                context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>()
+                .LogInformation("SignalR token received from query string");
             }
             return Task.CompletedTask;
         }
@@ -88,7 +90,9 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:3000", "https://naira-ledger-engine-1.onrender.com")
+        policy.WithOrigins(
+            "https://naira-ledger-engine-1.onrender.com",
+            "http://localhost:3000")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();
@@ -101,8 +105,13 @@ builder.Services.AddAuthorization(options =>
 });
 
 // ── SignalR ─────────────────────────────────────────
-builder.Services.AddSignalR();
-builder.Services.AddScoped<IRealTimeNotifier, SignalRRealTimeNotifier>();
+builder.Services.AddSignalR(options =>
+{
+    options.EnableDetailedErrors = true;      
+    options.KeepAliveInterval = TimeSpan.FromSeconds(30);
+    options.ClientTimeoutInterval = TimeSpan.FromSeconds(60);
+    options.MaximumReceiveMessageSize = 32 * 1024; // 32 KB
+}); builder.Services.AddScoped<IRealTimeNotifier, SignalRRealTimeNotifier>();
 
 // ── Rate Limiting ───────────────────────────────────
 builder.Services.AddRateLimiter(options =>
@@ -149,10 +158,10 @@ app.UseHttpsRedirection();
 app.UseForwardedHeaders();
 app.UseRateLimiter();
 
+app.UseCors("AllowFrontend");
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
-app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -167,7 +176,8 @@ app.MapAdminEndpoints();
 app.MapRedisEndpoints();
 
 // ── SignalR Hub ─────────────────────────────────────
-app.MapHub<NotificationHub>("/hubs/notifications");
+app.MapHub<NotificationHub>("/hubs/notifications")
+    .RequireCors("AllowFrontend");
 
 // ── Health Checks ───────────────────────────────────
 app.MapHealthChecks("/health/live", new HealthCheckOptions
