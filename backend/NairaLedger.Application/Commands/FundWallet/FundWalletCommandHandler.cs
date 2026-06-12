@@ -8,17 +8,20 @@ public class FundWalletCommandHandler : IRequestHandler<FundWalletCommand, FundW
     private readonly IWalletRepository _walletRepository;
     private readonly ITransactionRepository _transactionRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly INotificationService _notificationService;
     private readonly ILogger<FundWalletCommandHandler> _logger;
 
     public FundWalletCommandHandler(
         IWalletRepository walletRepository,
         ITransactionRepository transactionRepository,
         IUnitOfWork unitOfWork,
+        INotificationService notificationService,
         ILogger<FundWalletCommandHandler> logger)
     {
         _walletRepository = walletRepository;
         _transactionRepository = transactionRepository;
         _unitOfWork = unitOfWork;
+        _notificationService = notificationService;
         _logger = logger;
     }
 
@@ -48,6 +51,7 @@ public class FundWalletCommandHandler : IRequestHandler<FundWalletCommand, FundW
             await _transactionRepository.AddAsync(transaction, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             await _unitOfWork.CommitTransactionAsync(cancellationToken);
+            await _notificationService.SendToUserAsync(wallet.UserId.Value, $"Your wallet has been credited with NGN {request.Amount:N2}.", cancellationToken);
 
             _logger.LogInformation(
                 "Funded wallet {WalletId} with {Amount} NGN (TxRef: {Ref})",

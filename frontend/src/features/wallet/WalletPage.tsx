@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getWalletById } from '@/api/wallet';
-import { useWalletBalance } from '@/features/dashboard/hooks/useDashboard';
 import { useAuthStore } from '@/stores/authStore';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -9,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Copy, Check } from 'lucide-react';
 import { toast } from 'sonner';
+import { useWalletBalance } from '../../hooks/useDashboard';
 
 export default function WalletPage() {
   const { user } = useAuthStore();
