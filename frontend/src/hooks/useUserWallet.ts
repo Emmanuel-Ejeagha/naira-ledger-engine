@@ -16,16 +16,11 @@ export function useUserWallet() {
 
   const query = useQuery({
     queryKey: ['my-wallet'],
-    queryFn: () => fetchMyWallet(accessToken),
+    queryFn: () => fetchMyWallet(accessToken!),
     enabled: !!accessToken,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    onSuccess: (data) => {
-      localStorage.setItem('walletId', data.id); // keep for backward compatibility
-      setWalletId(data.id);
-    },
+    staleTime: 5 * 60 * 1000,
   });
-
-  useEffect(() => {
+    useEffect(() => {
     if (query.data) {
       localStorage.setItem('walletId', query.data.id);
       setWalletId(query.data.id);
