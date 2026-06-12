@@ -5,5 +5,5 @@
 /// </summary>
 public interface IIdempotentCommand
 {
-    IdempotencyKey IdempotencyKey { get; }
+    string IdempotencyKey { get; }
 }

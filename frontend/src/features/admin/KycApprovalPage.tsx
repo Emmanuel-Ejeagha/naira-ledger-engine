@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getPendingKycWallets, approveKyc, rejectKyc } from '@/api/admin';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { CheckCircle, XCircle } from 'lucide-react';
@@ -46,7 +46,7 @@ export default function KycApprovalPage() {
   }
 
   if (isError) {
-    return <p className="text-danger">Failed to load pending KYC wallets.</p>;
+    return <p className="text-destructive">Failed to load pending KYC wallets.</p>;
   }
 
   return (
@@ -56,10 +56,13 @@ export default function KycApprovalPage() {
         <CardContent className="p-0">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border text-left">
+              <tr className="border-b border-border text-left text-muted-foreground">
                 <th className="py-3 px-4">Wallet ID</th>
                 <th className="py-3 px-4">User ID</th>
                 <th className="py-3 px-4">Tag</th>
+                <th className="py-3 px-4">Full Name</th>
+                <th className="py-3 px-4">ID Number</th>
+                <th className="py-3 px-4">ID Type</th>
                 <th className="py-3 px-4">Actions</th>
               </tr>
             </thead>
@@ -69,6 +72,9 @@ export default function KycApprovalPage() {
                   <td className="py-3 px-4 font-mono text-xs">{wallet.id}</td>
                   <td className="py-3 px-4">{wallet.userId}</td>
                   <td className="py-3 px-4">{wallet.tag ?? '—'}</td>
+                  <td className="py-3 px-4">{wallet.kycFullName ?? '—'}</td>
+                  <td className="py-3 px-4">{wallet.kycIdNumber ?? '—'}</td>
+                  <td className="py-3 px-4">{wallet.kycIdType ?? '—'}</td>
                   <td className="py-3 px-4 flex gap-2">
                     <Button
                       size="sm"
@@ -91,7 +97,7 @@ export default function KycApprovalPage() {
               ))}
               {(!wallets || wallets.length === 0) && (
                 <tr>
-                  <td colSpan={4} className="py-8 text-center text-neutral">
+                  <td colSpan={7} className="py-8 text-center text-muted-foreground">
                     No pending KYC wallets.
                   </td>
                 </tr>

@@ -27,11 +27,11 @@ builder.Services.AddSwaggerGen(options =>
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
         BearerFormat = "JWT",
         In = ParameterLocation.Header,
-        Description = "Enter your JWT token WITHOUT the 'Bearer' prefix"
+        Description = "Enter your JWT token **WITHOUT** the 'Bearer' prefix – it will be added automatically."
     });
 
     options.AddSecurityRequirement(document => new OpenApiSecurityRequirement
@@ -63,6 +63,9 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret))
+        {
+            KeyId = "NairaLedgerSigningKey"
+        }
     };
     options.Events = new JwtBearerEvents
     {
@@ -73,6 +76,8 @@ builder.Services.AddAuthentication(options =>
             if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
             {
                 context.Token = accessToken;
+                context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>()
+                .LogInformation("SignalR token received from query string");
             }
             return Task.CompletedTask;
         }
@@ -85,10 +90,13 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:3000")
-              .AllowAnyHeader()
-              .AllowAnyMethod()
-              .AllowCredentials();
+        policy.WithOrigins(
+            "https://naira-ledger-engine-1.onrender.com",
+            "http://localhost:3000",
+            "https://alienate-blemish-confidant.ngrok-free.dev")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
@@ -98,8 +106,13 @@ builder.Services.AddAuthorization(options =>
 });
 
 // ── SignalR ─────────────────────────────────────────
-builder.Services.AddSignalR();
-builder.Services.AddScoped<IRealTimeNotifier, SignalRRealTimeNotifier>();
+builder.Services.AddSignalR(options =>
+{
+    options.EnableDetailedErrors = true;      
+    options.KeepAliveInterval = TimeSpan.FromSeconds(30);
+    options.ClientTimeoutInterval = TimeSpan.FromSeconds(60);
+    options.MaximumReceiveMessageSize = 32 * 1024; // 32 KB
+}); builder.Services.AddScoped<IRealTimeNotifier, SignalRRealTimeNotifier>();
 
 // ── Rate Limiting ───────────────────────────────────
 builder.Services.AddRateLimiter(options =>
@@ -146,10 +159,10 @@ app.UseHttpsRedirection();
 app.UseForwardedHeaders();
 app.UseRateLimiter();
 
+app.UseCors("AllowFrontend");
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
-app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -164,7 +177,8 @@ app.MapAdminEndpoints();
 app.MapRedisEndpoints();
 
 // ── SignalR Hub ─────────────────────────────────────
-app.MapHub<NotificationHub>("/hubs/notifications");
+app.MapHub<NotificationHub>("/hubs/notifications")
+    .RequireCors("AllowFrontend");
 
 // ── Health Checks ───────────────────────────────────
 app.MapHealthChecks("/health/live", new HealthCheckOptions

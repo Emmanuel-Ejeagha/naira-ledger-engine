@@ -1,13 +1,11 @@
 ﻿namespace NairaLedger.Application.Commands.TransferFunds;
 
-/// <summary>
-/// Handles P2P transfers with balance validation and double‑entry posting.
-/// </summary>
 public class TransferCommandHandler : IRequestHandler<TransferCommand, TransferResponse>
 {
     private readonly IWalletRepository _walletRepository;
     private readonly ITransactionRepository _transactionRepository;
     private readonly ILedgerQueryService _ledgerQueryService;
+    private readonly INotificationService _notificationService;   
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<TransferCommandHandler> _logger;
 
@@ -15,35 +13,40 @@ public class TransferCommandHandler : IRequestHandler<TransferCommand, TransferR
         IWalletRepository walletRepository,
         ITransactionRepository transactionRepository,
         ILedgerQueryService ledgerQueryService,
+        INotificationService notificationService,   
         IUnitOfWork unitOfWork,
         ILogger<TransferCommandHandler> logger)
     {
         _walletRepository = walletRepository;
         _transactionRepository = transactionRepository;
         _ledgerQueryService = ledgerQueryService;
+        _notificationService = notificationService;   
         _unitOfWork = unitOfWork;
         _logger = logger;
     }
 
-    public async Task<TransferResponse> Handle(TransferCommand command, CancellationToken cancellationToken)
+    public async Task<TransferResponse> Handle(TransferCommand request, CancellationToken cancellationToken)
     {
-        var fromWallet = await _walletRepository.GetByIdAsync(command.FromWalletId, cancellationToken);
+        var fromWallet = await _walletRepository.GetByIdAsync(request.FromWalletId, cancellationToken);
         if (fromWallet is null || !fromWallet.IsActive)
-            throw new InvalidOperationException("Sender wallet is invalid or inactive.");
+            throw new InvalidOperationException("Sender wallet not found or inactive.");
 
-        var toWallet = await _walletRepository.GetByIdAsync(command.ToWalletId, cancellationToken);
+        var toWallet = await _walletRepository.GetByIdAsync(request.ToWalletId, cancellationToken);
         if (toWallet is null || !toWallet.IsActive)
-            throw new InvalidOperationException("Recipient wallet is invalid or inactive.");
+            throw new InvalidOperationException("Recipient wallet not found or inactive.");
 
-        var balance = await _ledgerQueryService.GetBalanceAsync(command.FromWalletId, cancellationToken);
-        if (balance < command.Amount)
+        if (fromWallet.Id == toWallet.Id)
+            throw new InvalidOperationException("You cannot transfer to the same wallet.");
+
+        var balance = await _ledgerQueryService.GetBalanceAsync(request.FromWalletId, cancellationToken);
+        if (balance < request.Amount)
             throw new InvalidOperationException("Insufficient funds.");
 
         var reference = TransactionReference.Generate();
         var entries = new List<LedgerEntry>
         {
-            new(command.FromWalletId, command.Amount, LedgerEntryDirection.Debit, "Transfer: debit sender"),
-            new(command.ToWalletId, command.Amount, LedgerEntryDirection.Credit, "Transfer: credit receiver")
+            new(request.FromWalletId, request.Amount, LedgerEntryDirection.Debit, "Transfer: debit sender"),
+            new(request.ToWalletId, request.Amount, LedgerEntryDirection.Credit, "Transfer: credit receiver")
         };
 
         var transaction = new Transaction(reference, TransactionType.Transfer, entries, null);
@@ -57,7 +60,13 @@ public class TransferCommandHandler : IRequestHandler<TransferCommand, TransferR
 
             _logger.LogInformation(
                 "Transfer completed: {Amount} NGN from {From} to {To} (Ref: {Ref})",
-                command.Amount, command.FromWalletId, command.ToWalletId, reference.Value);
+                request.Amount, request.FromWalletId, request.ToWalletId, reference.Value);
+
+            var senderMessage = $"You sent NGN {request.Amount:N2} to wallet {request.ToWalletId.ToString()[..8]}…";
+            await _notificationService.SendToUserAsync(fromWallet.UserId.Value, senderMessage, cancellationToken);
+
+            var receiverMessage = $"You received NGN {request.Amount:N2} from wallet {request.FromWalletId.ToString()[..8]}…";
+            await _notificationService.SendToUserAsync(toWallet.UserId.Value, receiverMessage, cancellationToken);
 
             return new TransferResponse(transaction.Id, "Transfer completed successfully.");
         }

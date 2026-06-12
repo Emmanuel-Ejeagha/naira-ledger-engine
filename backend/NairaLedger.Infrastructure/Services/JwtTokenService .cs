@@ -14,7 +14,12 @@ public class JwtTokenService : ITokenService
     public string GenerateAccessToken(IEnumerable<Claim> claims)
     {
         _logger.LogDebug("Generating token with Secret length: {Length}", _settings.Secret.Length);
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_settings.Secret));
+        var keyBytes = Encoding.UTF8.GetBytes(_settings.Secret);
+        var key = new SymmetricSecurityKey(keyBytes)
+        {
+            KeyId = "NairaLedgerSigningKey"   // add a fixed kid
+        };
+
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
         var tokenDescriptor = new JwtSecurityToken(
             issuer: _settings.Issuer,

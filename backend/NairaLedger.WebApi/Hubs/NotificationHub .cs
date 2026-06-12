@@ -1,6 +1,6 @@
 ﻿namespace NairaLedger.WebApi.Hubs;
 
-[Authorize]
+ [Authorize]
 public class NotificationHub : Hub
 {
     public override async Task OnConnectedAsync()

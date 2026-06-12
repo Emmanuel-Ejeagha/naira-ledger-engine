@@ -60,7 +60,6 @@ public static class AdminEndpoints
         })
         .WithSummary("Reverse a transaction (Admin)");
 
-        // Inside MapAdminEndpoints, add:
         adminGroup.MapPost("/users/create-admin", async (CreateAdminUserCommand command, IMediator mediator) =>
         {
             var result = await mediator.Send(command);

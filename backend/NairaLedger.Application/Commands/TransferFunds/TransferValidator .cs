@@ -17,7 +17,8 @@ public class TransferValidator : AbstractValidator<TransferCommand>
         RuleFor(x => x.Amount)
             .GreaterThan(0).WithMessage("Transfer amount must be greater than zero.");
 
-        RuleFor(x => x.IdempotencyKey.Value)
-            .NotEmpty().WithMessage("Idempotency key is required.");
+        RuleFor(x => x.IdempotencyKey)
+            .NotEmpty().WithMessage("Idempotency key is required.")
+            .MaximumLength(128).WithMessage("Idempotency key must not exceed 128 characters.");
     }
 }

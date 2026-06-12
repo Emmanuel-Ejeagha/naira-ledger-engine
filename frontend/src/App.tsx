@@ -1,23 +1,25 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from 'sonner';
-import ProtectedRoute from '@/components/layout/ProtectedRoute';
-import AppLayout from '@/components/layout/AppLayout';
-import AdminRoute from '@/components/layout/AdminRoute';
-import LoginPage from '@/features/auth/Login';
-import RegisterPage from '@/features/auth/Register';
-import DashboardPage from '@/features/dashboard/DashboardPage';
-import WalletPage from '@/features/wallet/WalletPage';
-import FundingPage from '@/features/funding/FundingPage';
-import TransferPage from '@/features/transfer/TransferPage';
-import TransactionsPage from '@/features/transactions/TransactionsPage';
-import KycPage from '@/features/kyc/KycPage';
-import NotificationsPage from '@/features/notifications/NotificationsPage';
-import QRPage from '@/features/qr/QRPage';
-import SettingsPage from '@/features/settings/SettingsPage';
-import AdminReversalPage from '@/features/admin/AdminReversalPage';
-import KycApprovalPage from '@/features/admin/KycApprovalPage';
+import LoginPage from './features/auth/Login';
+import RegisterPage from './features/auth/Register';
+import ProtectedRoute from './components/layout/ProtectedRoute';
+import AppLayout from './components/layout/AppLayout';
+import DashboardPage from './features/dashboard/DashboardPage';
+import AdminRoute from './components/layout/AdminRoute';
+import AdminReversalPage from './features/admin/AdminReversalPage';
 import CreateAdminPage from './features/admin/CreateAdminPage';
+import KycApprovalPage from './features/admin/KycApprovalPage';
+import FundingPage from './features/funding/FundingPage';
+import KycPage from './features/kyc/KycPage';
+import NotificationsPage from './features/notifications/NotificationsPage';
+import QRPage from './features/qr/QRPage';
+import SettingsPage from './features/settings/SettingsPage';
+import TransactionsPage from './features/transactions/TransactionsPage';
+import TransferPage from './features/transfer/TransferPage';
+import WalletPage from './features/wallet/WalletPage';
+import SignalRProvider from './components/SignalRProvider';
+
 
 const queryClient = new QueryClient();
 
@@ -25,6 +27,7 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
+        <SignalRProvider>
         <Routes>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
@@ -44,7 +47,7 @@ export default function App() {
               <Route path="/settings" element={<SettingsPage />} />
 
               {/* Admin routes wrapped in AdminRoute */}
-              <Route element={<AdminRoute />}>
+              <Route element={<AdminRoute children={undefined} />}>
                 <Route path="/admin/kyc" element={<KycApprovalPage />} />
                 <Route path="/admin/reversal" element={<AdminReversalPage />} />
                 <Route path="/admin/create-admin" element={<CreateAdminPage />} />
@@ -55,6 +58,7 @@ export default function App() {
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
+        </SignalRProvider>
       </BrowserRouter>
       <Toaster position="top-right" richColors closeButton />
     </QueryClientProvider>

@@ -28,6 +28,9 @@ internal class WalletConfiguration : IEntityTypeConfiguration<Wallet>
         builder.Property(w => w.Version)
             .IsConcurrencyToken()
             .ValueGeneratedNever();
+        builder.Property(w => w.KycFullName).HasMaxLength(200);
+        builder.Property(w => w.KycIdNumber).HasMaxLength(50);
+        builder.Property(w => w.KycIdType).HasMaxLength(50);
 
         builder.Ignore(w => w.DomainEvents);
     }

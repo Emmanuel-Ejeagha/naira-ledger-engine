@@ -25,9 +25,6 @@ public class TransferCompletedEventHandler : INotificationHandler<DomainEventNot
         _logger.LogInformation("Transfer completed: {From} -> {To}, Amount: {Amount}",
             domainEvent.FromWalletId, domainEvent.ToWalletId, domainEvent.Amount);
 
-        await _notificationService.SendToUserAsync(domainEvent.FromWalletId, "Transfer sent.", cancellationToken);
-        await _notificationService.SendToUserAsync(domainEvent.ToWalletId, "Transfer received.", cancellationToken);
-
         var sender = await _walletRepository.GetOwnerInfoAsync(domainEvent.FromWalletId, cancellationToken);
         var receiver = await _walletRepository.GetOwnerInfoAsync(domainEvent.ToWalletId, cancellationToken);
 

@@ -75,7 +75,9 @@ export const useAuthStore = create<AuthState>((set) => ({
         fullName: payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'],
       },
       roles,
+      walletId: null,   // <-- reset wallet on login
     });
+    localStorage.removeItem('walletId');   // clear any leftover wallet ID
   },
 
   register: async (email, fullName, password) => {
@@ -88,5 +90,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     set({ user: null, accessToken: null, refreshToken: null, roles: [], walletId: null });
   },
 
-  setWalletId: (id: string) => set({ walletId: id }),
+  setWalletId: (id: string) => {
+    localStorage.setItem('walletId', id);
+    set({ walletId: id });
+  },
 }));
