@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { initiateFunding, verifyPayment } from '@/api/funding';
-import { useWalletBalance } from '@/features/dashboard/hooks/useDashboard';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { fundingSchema, type FundingFormData } from '@/lib/validations/transactions';
@@ -15,6 +14,7 @@ import { toast } from 'sonner';
 import { CheckCircle, XCircle, ExternalLink, Loader2 } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import BalanceCard from '../dashboard/components/BalanceCard';
+import { useWalletBalance } from '../../hooks/useDashboard';
 
 export default function FundingPage() {
   const walletId = useAuthStore((s) => s.walletId);
@@ -136,7 +136,9 @@ export default function FundingPage() {
           <CardContent className="py-4 space-y-4">
             <Alert>
               <AlertDescription>
-                You will be redirected to Paystack to complete your payment of NGN {initiateMutation.variables?.amount}.
+                <span className="text-red-600">
+                  You will be redirected to Paystack to complete your payment of NGN {initiateMutation.variables?.amount}.
+                </span>
               </AlertDescription>
             </Alert>
             <div className="flex gap-4">

@@ -1,7 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
-import { useUserWallet } from '@/features/dashboard/hooks/useUserWallet';
+import { useUserWallet } from '../../hooks/useUserWallet';
 
 export default function AppLayout() {
   useUserWallet();   

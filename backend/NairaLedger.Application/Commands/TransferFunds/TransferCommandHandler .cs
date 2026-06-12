@@ -62,8 +62,11 @@ public class TransferCommandHandler : IRequestHandler<TransferCommand, TransferR
                 "Transfer completed: {Amount} NGN from {From} to {To} (Ref: {Ref})",
                 request.Amount, request.FromWalletId, request.ToWalletId, reference.Value);
 
-            await _notificationService.SendToUserAsync(fromWallet.UserId.Value, "Transfer sent.", cancellationToken);
-            await _notificationService.SendToUserAsync(toWallet.UserId.Value, "Transfer received.", cancellationToken);
+            var senderMessage = $"You sent NGN {request.Amount:N2} to wallet {request.ToWalletId.ToString()[..8]}…";
+            await _notificationService.SendToUserAsync(fromWallet.UserId.Value, senderMessage, cancellationToken);
+
+            var receiverMessage = $"You received NGN {request.Amount:N2} from wallet {request.FromWalletId.ToString()[..8]}…";
+            await _notificationService.SendToUserAsync(toWallet.UserId.Value, receiverMessage, cancellationToken);
 
             return new TransferResponse(transaction.Id, "Transfer completed successfully.");
         }

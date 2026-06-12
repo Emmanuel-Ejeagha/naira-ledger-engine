@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { executeTransfer, type TransferRequest } from '@/api/transfer';
-import { useWalletBalance } from '@/features/dashboard/hooks/useDashboard';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { transferSchema, type TransferFormData } from '@/lib/validations/transactions';
@@ -14,6 +13,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { CheckCircle, ArrowLeftRight } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
+import { useWalletBalance } from '../../hooks/useDashboard';
 
 type Step = 'form' | 'confirm' | 'receipt';
 
@@ -48,7 +48,8 @@ export default function TransferPage() {
       toast.success('Transfer completed');
     },
     onError: (err: any) => {
-      toast.error(err.response?.data?.error || 'Transfer failed');
+      const message = err.response?.data?.error || err.message || 'Transfer failed';
+      toast.error(message);
       setStep('form');
     },
   });
@@ -60,8 +61,17 @@ export default function TransferPage() {
   };
 
   const handleConfirm = () => {
-    if (formData) transferMutation.mutate(formData);
-  };
+  if (formData) {
+    const request: TransferRequest = {
+      fromWalletId: formData.fromWalletId,
+      toWalletId: formData.toWalletId,
+      amount: formData.amount,
+      idempotencyKey: String(formData.idempotencyKey), // force plain string
+    };
+    transferMutation.mutate(request);
+  }
+};
+
 
   const handleCancel = () => {
     setStep('form');
@@ -124,7 +134,7 @@ export default function TransferPage() {
                   <p className="text-sm text-destructive">{errors.amount.message}</p>
                 )}
                 {balance && (
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-xs text-success font-semibold">
                     Balance: NGN {balance.balance.toFixed(2)}
                   </p>
                 )}
