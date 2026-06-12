@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { getTransactions, type TransactionFilters } from '@/api/transactions';
 import type { TransactionDto } from '@/types/transaction';
 import { Button } from '@/components/ui/button';
@@ -41,30 +41,28 @@ export default function TransactionsPage() {
   const { data, isLoading, isError, error, isFetching } = useQuery({
     queryKey: ['transactions', walletId, cursor, search, type, dateFrom, dateTo],
     queryFn: () => getTransactions(filters),
-    enabled: !!walletId, 
-    keepPreviousData: true,
-    onSuccess: (newData) => {
-      setHistory((prev) => {
-        const newHistory = [...prev];
-        if (cursor) {
-          const existingIndex = newHistory.findIndex(
-            (page) => page[0]?.transactionId === newData.items[0]?.transactionId
-          );
-          if (existingIndex >= 0) {
-            newHistory[existingIndex] = newData.items;
-          } else {
-            newHistory.push(newData.items);
-          }
-        } else {
-          return [newData.items];
-        }
-        return newHistory;
-      });
-    },
-    onError: () => {
-      toast.error('Failed to load transactions');
-    },
+    placeholderData: keepPreviousData,   
   });
+  
+    useEffect(() => {
+  if (data) {
+    setHistory(prev => {
+      const newHistory = [...prev];
+      if (cursor) {
+        const existingIndex = newHistory.findIndex(page => page[0]?.transactionId === data.items[0]?.transactionId);
+        if (existingIndex >= 0) newHistory[existingIndex] = data.items;
+        else newHistory.push(data.items);
+      } else {
+        return [data.items];
+      }
+      return newHistory;
+    });
+  }
+}, [data, cursor]);
+
+useEffect(() => {
+  if (isError) toast.error('Failed to load transactions');
+}, [isError]);
 
   const hasNextPage = data?.hasMore ?? false;
   const currentPageItems = data?.items ?? [];
