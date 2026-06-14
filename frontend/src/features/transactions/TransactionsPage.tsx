@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { getTransactions, type TransactionFilters } from '@/api/transactions';
 import type { TransactionDto } from '@/types/transaction';
 import { Button } from '@/components/ui/button';
@@ -29,7 +29,7 @@ export default function TransactionsPage() {
   const [dateTo, setDateTo] = useState('');
 
   const filters: TransactionFilters = {
-    walletId,
+    walletId: walletId || '',
     pageSize: PAGE_SIZE,
     cursor,
     search: search || undefined,
@@ -42,29 +42,27 @@ export default function TransactionsPage() {
     queryKey: ['transactions', walletId, cursor, search, type, dateFrom, dateTo],
     queryFn: () => getTransactions(filters),
     enabled: !!walletId, 
-    keepPreviousData: true,
-    onSuccess: (newData) => {
-      setHistory((prev) => {
+    placeholderData: keepPreviousData,
+  });
+  useEffect(() => {
+    if (data) {
+      setHistory(prev => {
         const newHistory = [...prev];
         if (cursor) {
-          const existingIndex = newHistory.findIndex(
-            (page) => page[0]?.transactionId === newData.items[0]?.transactionId
-          );
-          if (existingIndex >= 0) {
-            newHistory[existingIndex] = newData.items;
-          } else {
-            newHistory.push(newData.items);
-          }
+          const existingIndex = newHistory.findIndex(page => page[0]?.transactionId === data.items[0]?.transactionId);
+          if (existingIndex >= 0) newHistory[existingIndex] = data.items;
+          else newHistory.push(data.items);
         } else {
-          return [newData.items];
+          return [data.items];
         }
         return newHistory;
       });
-    },
-    onError: () => {
-      toast.error('Failed to load transactions');
-    },
-  });
+    }
+  }, [data, cursor]);
+
+  useEffect(() => {
+    if (isError) toast.error('Failed to load transactions');
+  }, [isError]);
 
   const hasNextPage = data?.hasMore ?? false;
   const currentPageItems = data?.items ?? [];
@@ -87,8 +85,8 @@ export default function TransactionsPage() {
     setHistory([]);
   };
 
-  const handleTypeChange = (value: string) => {
-    setType(value);
+  const handleTypeChange = (value: string | null) => {
+    setType(value || 'all');
     setCursor(undefined);
     setHistory([]);
   };

@@ -2,7 +2,6 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path';
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
   resolve: {
@@ -11,19 +10,22 @@ export default defineConfig({
     },
   },
   server: {
-    port: 3000,              // frontend port
+    port: 3000,
     proxy: {
       '/api': {
-        target: 'https://naira-ledger-engine-1.onrender.com',  
+        target: 'https://naira-ledger-engine-1.onrender.com',
         changeOrigin: true,
-        secure: true,                     
+        secure: true,
       },
       '/hubs': {
         target: 'https://naira-ledger-engine-1.onrender.com',
-        ws: true,                          
+        ws: true,
         changeOrigin: true,
         secure: true,
       },
     },
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom'],
   },
 })

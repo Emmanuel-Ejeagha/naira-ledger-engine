@@ -14,7 +14,7 @@ import { toast } from 'sonner';
 import { CheckCircle, XCircle, ExternalLink, Loader2 } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import BalanceCard from '../dashboard/components/BalanceCard';
-import { useWalletBalance } from '../../hooks/useDashboard';
+import { useWalletBalance } from '../dashboard/hooks/useDashboard';
 
 export default function FundingPage() {
   const walletId = useAuthStore((s) => s.walletId);

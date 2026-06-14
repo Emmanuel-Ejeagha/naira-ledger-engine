@@ -1,8 +1,12 @@
 import apiClient from './client';
 import type { KycInfo, SubmitKycRequest } from '@/types/kyc';
 
-export const getKycStatus = (walletId: string) =>
-  apiClient.get<KycInfo>(`/wallets/${walletId}`).then((res) => ({
+export const getKycStatus = (walletId: string, token: string) =>
+  apiClient.get<KycInfo>(`/wallets/${walletId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }).then((res) => ({
     kycLevel: (res.data as any).kycLevel,  // extract kycLevel from wallet response
     canSubmit: (res.data as any).kycLevel === 'Unverified',
   }));

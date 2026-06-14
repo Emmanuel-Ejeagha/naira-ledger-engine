@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '@/stores/authStore';
 import apiClient from '@/api/client';
 
+
 export const fetchMyWallet = (token: string) =>
   apiClient
     .get<{ id: string; tag: string; kycLevel: string; isActive: boolean }>('/wallets/me', {
@@ -16,13 +17,9 @@ export function useUserWallet() {
 
   const query = useQuery({
     queryKey: ['my-wallet'],
-    queryFn: () => fetchMyWallet(accessToken),
+    queryFn: () => fetchMyWallet(accessToken!),
     enabled: !!accessToken,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    onSuccess: (data) => {
-      localStorage.setItem('walletId', data.id); // keep for backward compatibility
-      setWalletId(data.id);
-    },
+    staleTime: 5 * 60 * 1000, 
   });
 
   useEffect(() => {

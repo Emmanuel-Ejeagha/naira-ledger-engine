@@ -117,7 +117,7 @@ export default function QRPage() {
               <Button variant="outline" size="sm" onClick={handleDownload}>
                 <Download className="h-4 w-4 mr-2" /> Download
               </Button>
-              {navigator.share && (
+              {typeof navigator.share === 'function' && (
                 <Button variant="outline" size="sm" onClick={handleShare}>
                   <Share2 className="h-4 w-4 mr-2" /> Share
                 </Button>
