@@ -13,9 +13,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { CheckCircle, ArrowLeftRight } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
-import { useWalletBalance } from '../../hooks/useDashboard';
+import { useWalletBalance } from '../dashboard/hooks/useDashboard';
 
 type Step = 'form' | 'confirm' | 'receipt';
+type TransferFormDataWithKey = TransferFormData & { idempotencyKey?: string };
 
 export default function TransferPage() {
   const walletId = useAuthStore((s) => s.walletId);
@@ -55,8 +56,7 @@ export default function TransferPage() {
   });
 
   const onSubmit = (data: TransferFormData) => {
-    const idempotencyKey = crypto.randomUUID();
-    setFormData({ ...data, idempotencyKey });
+    setFormData({ ...data, idempotencyKey: crypto.randomUUID() });
     setStep('confirm');
   };
 
@@ -207,7 +207,7 @@ export default function TransferPage() {
               )}
               {isReversible && (
                 <div className="col-span-2 mt-2">
-                  <Alert variant="warning">
+                  <Alert variant="default" className="border-amber-500 text-amber-700">
                     <AlertDescription>
                       This transfer can be reversed within the next 30 minutes.
                     </AlertDescription>
