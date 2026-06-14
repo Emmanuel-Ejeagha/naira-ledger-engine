@@ -8,7 +8,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Copy, Check } from 'lucide-react';
 import { toast } from 'sonner';
-import { useWalletBalance } from '../../hooks/useDashboard';
+import { useWalletBalance } from '../dashboard/hooks/useDashboard';
+
+const kycLabels: Record<string, string> = {
+  '0': 'Unverified',
+  '1': 'Tier1',
+  '2': 'Tier2',
+  '3': 'Tier3',
+};
 
 export default function WalletPage() {
   const { user } = useAuthStore();
@@ -20,13 +27,6 @@ export default function WalletPage() {
     queryFn: () => getWalletById(walletId!),
     enabled: !!walletId,
   });
-
-  const kycLabels: Record<number, string> = {
-  0: 'Unverified',
-  1: 'Tier1',
-  2: 'Tier2',
-  3: 'Tier3',
-}
 
   const { data: balance, isLoading: balanceLoading } = useWalletBalance(walletId);
 
@@ -50,8 +50,11 @@ export default function WalletPage() {
   }
 
   if (!wallet) {
-    return <p className="text-danger">Wallet not found.</p>;
+    return <p className="text-destructive">Wallet not found.</p>;
   }
+
+  // Safe to access wallet here
+  const tagValue = (wallet.tag as any)?.value ?? wallet.tag ?? 'No tag';
 
   return (
     <div className="space-y-6">
@@ -63,30 +66,30 @@ export default function WalletPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <span className="text-sm text-neutral">Wallet ID</span>
+              <span className="text-sm text-muted-foreground">Wallet ID</span>
               <p className="font-mono text-sm break-all">{wallet.id}</p>
             </div>
             <div>
-              <span className="text-sm text-neutral">Tag</span>
+              <span className="text-sm text-muted-foreground">Tag</span>
               <div className="flex items-center gap-2 mt-1">
-                <Input value={wallet.tag?.value ?? wallet.tag ?? 'No tag'} readOnly className="max-w-xs" />
+                <Input value={tagValue} readOnly className="max-w-xs" />
                 <Button variant="outline" size="icon" onClick={handleCopyTag}>
                   {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                 </Button>
               </div>
             </div>
             <div>
-              <span className="text-sm text-neutral">KYC Level</span>
-              <p className="font-medium">{kycLabels[wallet.kycLevel as number] || 'Unknown'}</p>
+              <span className="text-sm text-muted-foreground">KYC Level</span>
+              <p className="font-medium">{kycLabels[String(wallet.kycLevel)] || 'Unknown'}</p>
             </div>
             <div>
-              <span className="text-sm text-neutral">Status</span>
-              <p className={`font-medium ${wallet.isActive ? 'text-success' : 'text-danger'}`}>
+              <span className="text-sm text-muted-foreground">Status</span>
+              <p className={`font-medium ${wallet.isActive ? 'text-success' : 'text-destructive'}`}>
                 {wallet.isActive ? 'Active' : 'Inactive'}
               </p>
             </div>
             <div>
-              <span className="text-sm text-neutral">Created</span>
+              <span className="text-sm text-muted-foreground">Created</span>
               <p className="text-sm">{new Date(wallet.createdAt).toLocaleDateString()}</p>
             </div>
           </CardContent>
@@ -98,9 +101,9 @@ export default function WalletPage() {
           </CardHeader>
           <CardContent>
             <span className="text-4xl font-bold text-success">
-  NGN {balance?.balance.toFixed(2) ?? '0.00'}
-</span>
-            <p className="text-xs text-neutral mt-2">Real-time balance</p>
+              NGN {balance?.balance.toFixed(2) ?? '0.00'}
+            </span>
+            <p className="text-xs text-muted-foreground mt-2">Real-time balance</p>
           </CardContent>
         </Card>
       </div>
