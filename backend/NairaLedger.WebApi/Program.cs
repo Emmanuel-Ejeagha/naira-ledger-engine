@@ -93,7 +93,7 @@ builder.Services.AddCors(options =>
         policy.WithOrigins(
             "https://naira-ledger-engine-1.onrender.com",
             "http://localhost:3000",
-            "https://alienate-blemish-confidant.ngrok-free.dev")
+            "https://naira-ledger-engine.vercel.app")
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
