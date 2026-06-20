@@ -20,9 +20,17 @@ public static class DependencyInjection
             options.Password.RequireUppercase = true;
             options.Password.RequiredLength = 8;
             options.Lockout.MaxFailedAccessAttempts = 5;
+            options.Tokens.EmailConfirmationTokenProvider = "EmailConfirmationTokenProvider";
         })
         .AddEntityFrameworkStores<NairaLedgerDbContext>()
-        .AddDefaultTokenProviders();
+        .AddDefaultTokenProviders()
+        .AddTokenProvider<EmailConfirmationTokenProvider<AppUser>>("EmailConfirmationTokenProvider");
+
+        services.AddTransient<EmailConfirmationTokenProvider<AppUser>>();
+        services.Configure<DataProtectionTokenProviderOptions>(options =>
+        {
+            options.TokenLifespan = TimeSpan.FromHours(2);
+        });
 
         // Redis
         var env = configuration["ASPNETCORE_ENVIRONMENT"] ?? "Production";
@@ -120,6 +128,7 @@ public static class DependencyInjection
 
         // SMTP
         services.Configure<SmtpSettings>(configuration.GetSection("Smtp"));
+        services.AddMemoryCache();
 
         return services;
     }

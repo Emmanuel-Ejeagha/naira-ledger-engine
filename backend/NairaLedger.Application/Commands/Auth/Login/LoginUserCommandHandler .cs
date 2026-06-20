@@ -1,4 +1,4 @@
-﻿namespace NairaLedger.Application.Commands.Auth;
+﻿namespace NairaLedger.Application.Commands.Auth.Login;
 
 /// <summary>
 /// Authenticates a user and returns a JWT + refresh token.
@@ -22,17 +22,19 @@ public class LoginUserCommandHandler : IRequestHandler<LoginUserCommand, LoginUs
     public async Task<LoginUserResponse> Handle(LoginUserCommand request, CancellationToken cancellationToken)
     {
         await _userService.ValidatePasswordAsync(request.Email, request.Password, cancellationToken);
-        var user = await _userService.FindByEmailAsync(request.Email, cancellationToken);
-        if (user is null)
-            throw new UnauthorizedAccessException("Invalid email or password.");
+        var user = await _userService.FindByEmailAsync(request.Email, cancellationToken) ?? throw new UnauthorizedAccessException("Invalid email or password.");
+
+        if (!user.EmailConfirmed)
+            throw new InvalidOperationException("Please verify your email address before logging in.");
 
         // Build claims
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Name, user.FullName)
+            new(ClaimTypes.NameIdentifier, user.UserId.ToString()),
+            new(ClaimTypes.Email, user.Email),
+            new(ClaimTypes.Name, user.FullName)
         };
+        claims.Add(new Claim("email_verified", user.EmailConfirmed.ToString().ToLower()));
 
         // Add role claims
         var roles = await _userService.GetRolesAsync(user.UserId, cancellationToken);

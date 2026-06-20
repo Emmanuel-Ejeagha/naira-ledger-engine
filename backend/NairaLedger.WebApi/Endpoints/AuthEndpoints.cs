@@ -1,4 +1,7 @@
-﻿namespace NairaLedger.WebApi.Endpoints;
+﻿using Microsoft.Extensions.Caching.Memory;
+using NairaLedger.Application.Commands.Auth.VerifyEmail;
+
+namespace NairaLedger.WebApi.Endpoints;
 
 public static class AuthEndpoints
 {
@@ -49,5 +52,32 @@ public static class AuthEndpoints
         .WithDescription("Changes the password for the currently authenticated user.")
         .Produces(200)
         .ProducesProblem(400);
+
+        authGroup.MapPost("/send-verification-email", async (SendVerificationEmailCommand command, IMediator mediator, HttpContext httpcontext) =>
+        {
+            var emailKey = $"verify-resend:{command.Email}";
+            var cache = httpcontext.RequestServices.GetRequiredService<IMemoryCache>();
+            if (cache.TryGetValue(emailKey, out _))
+                return Results.Problem("Verification email already sent. Please wait before trying again.", statusCode: 429);
+            
+            await mediator.Send(command);
+            cache.Set(emailKey, true, TimeSpan.FromSeconds(60));
+            return Results.Ok(new { message = "Verification email sent." });
+        })
+        .WithSummary("Send verification email")
+        .WithDescription("Sends a verification email to the specified email address.")
+        .Produces(200)
+        .ProducesProblem(400);
+
+        authGroup.MapGet("/verify-email", async (Guid userId, string token, IMediator mediator) =>
+        {
+            await mediator.Send(new VerifyEmailCommand(userId, token));
+            return Results.Ok(new { message = "Email verified successfully." });
+        })
+        .WithSummary("Verify email address")
+        .WithDescription("Sends a verification email to the specified email address. Rate‑limited to 1 request per 60 seconds.")
+        .Produces(200)
+        .ProducesProblem(400)
+        .ProducesProblem(429);
     }
 }

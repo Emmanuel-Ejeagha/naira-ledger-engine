@@ -31,12 +31,26 @@ export default function LoginPage() {
     setServerError('');
     try {
       await login(data.email, data.password);
+      const isVerified = useAuthStore.getState().emailConfirmed;
+
+      if (!isVerified) {
+        setServerError('Your email is not verified yet.');
+        toast.error('Please verify your email before logging in.');
+        navigate('/unverified', { state: { email: data.email } });
+        return;
+      }
+
       toast.success('Login successful');
       navigate('/dashboard');
     } catch (err: any) {
       const message = err.response?.data?.error || 'Invalid email or password';
       setServerError(message);
       toast.error(message);
+
+      if (message.includes('verify your email')) {
+        // Pass the email so the unverified page can pre‑fill it
+        navigate('/unverified', { state: { email: data.email } });
+      }
     } finally {
       setIsSubmitting(false);
     }
