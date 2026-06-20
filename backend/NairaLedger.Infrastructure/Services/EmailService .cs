@@ -51,7 +51,18 @@ public class EmailService : IEmailService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to send email to {To}", to);
+            throw;
         }
+    }
+
+    public async Task SendVerificationEmailAsync(string toEmail, string toName, string verificationLink, CancellationToken cancellationToken)
+    {
+        var subject = "Verify your NairaLedger email address";
+        var body = $@"<p>Hi {toName},</p>
+            <p>Please verify your email address by clicking the link below:</p>
+            <p><a href=""{verificationLink}"">Verify Email</a></p>
+            <p>If you didn't create an account, please ignore this email.</p>";
+        await SendEmailAsync(toEmail, subject, body, cancellationToken);
     }
 }
 

@@ -14,12 +14,13 @@ export const useSignalRContext = () => useContext(SignalRContext);
 
 export default function SignalRProvider({ children }: { children: ReactNode }) {
   const token = useAuthStore((s) => s.accessToken);
+  const emailConfirmed = useAuthStore((s) => s.emailConfirmed);
   const addNotification = useNotificationStore((s) => s.addNotification);
   const [isConnected, setIsConnected] = useState(false);
   const connectionRef = useRef<signalR.HubConnection | null>(null);
 
   useEffect(() => {
-    if (!token) {
+    if (!token || !emailConfirmed) {
       if (connectionRef.current) {
         connectionRef.current.stop();
         connectionRef.current = null;
