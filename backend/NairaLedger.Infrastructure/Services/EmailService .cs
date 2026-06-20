@@ -64,6 +64,16 @@ public class EmailService : IEmailService
             <p>If you didn't create an account, please ignore this email.</p>";
         await SendEmailAsync(toEmail, subject, body, cancellationToken);
     }
+
+    public async Task SendPasswordResetEmailAsync(string toEmail, string toName, string resetLink, CancellationToken cancellationToken = default)
+    {
+        var subject = "Reset your NairaLedger password";
+        var body = $@"<p>Hi {toName},</p>
+            <p>You requested a password reset. Click the link below to reset your password:</p>
+            <p><a href=""{resetLink}"">Reset Password</a></p>
+            <p>If you didn't request this, please ignore this email.</p>";
+        await SendEmailAsync(toEmail, subject, body, cancellationToken);
+    }
 }
 
 public class SmtpSettings

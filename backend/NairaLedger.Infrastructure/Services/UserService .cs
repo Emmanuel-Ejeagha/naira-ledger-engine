@@ -110,4 +110,20 @@ public class UserService : IUserService
         if (!result.Succeeded)
             throw new InvalidOperationException($"Email confirmation failed: {string.Join(", ", result.Errors.Select(e => e.Description))}");
     }
+
+    public async Task<string> GeneratePasswordResetTokenAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString())
+            ?? throw new InvalidOperationException(UserNotFoundMessage);
+        return await _userManager.GeneratePasswordResetTokenAsync(user);
+    }
+
+    public async Task ResetPasswordAsync(Guid userId, string token, string newPassword, CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString())
+            ?? throw new InvalidOperationException(UserNotFoundMessage);
+        var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+        if (!result.Succeeded)
+            throw new InvalidOperationException($"Password reset failed: {string.Join(", ", result.Errors.Select(e => e.Description))}");
+    }
 }

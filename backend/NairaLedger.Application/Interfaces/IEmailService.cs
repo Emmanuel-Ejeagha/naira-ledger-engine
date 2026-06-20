@@ -24,4 +24,6 @@ public interface IEmailService
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task SendVerificationEmailAsync(string toEmail, string toName, string verificationLink, CancellationToken cancellationToken);
+
+    Task SendPasswordResetEmailAsync(string toEmail, string toName, string resetLink, CancellationToken cancellationToken = default);
 }
