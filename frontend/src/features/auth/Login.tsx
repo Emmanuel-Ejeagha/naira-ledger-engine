@@ -48,7 +48,6 @@ export default function LoginPage() {
       toast.error(message);
 
       if (message.includes('verify your email')) {
-        // Pass the email so the unverified page can pre‑fill it
         navigate('/unverified', { state: { email: data.email } });
       }
     } finally {
@@ -71,6 +70,7 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {/* Email field */}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -88,6 +88,8 @@ export default function LoginPage() {
                 </p>
               )}
             </div>
+
+            {/* Password field with visibility toggle */}
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <div className="relative">
@@ -123,11 +125,22 @@ export default function LoginPage() {
                 </p>
               )}
             </div>
+
+            {/* Server error */}
             {serverError && (
               <p className="text-sm text-destructive" role="alert">
                 {serverError}
               </p>
             )}
+
+            {/* Forgot password link */}
+            <div className="text-right">
+              <Link to="/forgot-password" className="text-xs text-info hover:underline">
+                Forgot your password?
+              </Link>
+            </div>
+
+            {/* Submit button */}
             <Button type="submit" className="w-full" disabled={isSubmitting}>
               {isSubmitting ? (
                 <>
@@ -139,6 +152,8 @@ export default function LoginPage() {
               )}
             </Button>
           </form>
+
+          {/* Registration link */}
           <p className="mt-4 text-center text-sm text-muted-foreground">
             Don't have an account?{' '}
             <Link to="/register" className="text-info hover:underline">
