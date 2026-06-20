@@ -52,6 +52,10 @@ public interface IUserService
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task ConfirmEmailAsync(Guid userId, string token, CancellationToken cancellationToken = default);
+
+    Task<string> GeneratePasswordResetTokenAsync(Guid userId, CancellationToken cancellationToken = default);
+
+    Task ResetPasswordAsync(Guid userId, string token, string newPassword, CancellationToken cancellationToken = default);
 }
 
 /// <summary>
