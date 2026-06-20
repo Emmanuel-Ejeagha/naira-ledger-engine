@@ -36,6 +36,22 @@ public interface IUserService
     Task<IReadOnlyList<string>> GetRolesAsync(Guid userId, CancellationToken cancellationToken = default);
 
     Task AddToRoleAsync(Guid userId, string role, CancellationToken cancellationToken = default);
+    /// <summary>
+    /// Generates an email confirmation token for the user, which can be sent in a verification email. The token is typically a secure string that encodes the user's identity and expiration time.
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task<string> GenerateEmailConfirmationTokenAsync(Guid userId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Confirms the user's email using the provided token. This method validates the token and, if valid, marks the user's email as confirmed in the system. If the token is invalid or expired, it should throw an appropriate exception.
+    /// </summary>
+    /// <param name="userId"></param>
+    /// <param name="token"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task ConfirmEmailAsync(Guid userId, string token, CancellationToken cancellationToken = default);
 }
 
 /// <summary>
@@ -43,7 +59,3 @@ public interface IUserService
 /// </summary>
 public record CreateUserResult(Guid UserId, string Email, string FullName);
 
-/// <summary>
-/// Lightweight user data for application use (no identity internals).
-/// </summary>
-public record UserDto(Guid UserId, string Email, string FullName);
