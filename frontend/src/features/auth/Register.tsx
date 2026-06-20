@@ -31,9 +31,14 @@ export default function RegisterPage() {
     setIsSubmitting(true);
     setServerError('');
     try {
-      await registerUser(data.email, data.fullName, data.password);
-      toast.success('Account created successfully! You can now log in.');
-      navigate('/login');
+      const result = await registerUser(data.email, data.fullName, data.password);
+      toast.success('Account created!');
+      navigate('/verify-email-sent', {
+        state: {
+          email: data.email,
+          message: result?.message || 'Please check your email to verify your account.',
+        },
+      });
     } catch (err: any) {
       const message = err.response?.data?.error || 'Registration failed';
       setServerError(message);

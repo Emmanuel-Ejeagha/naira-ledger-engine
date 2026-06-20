@@ -13,9 +13,10 @@ interface AuthState {
   refreshToken: string | null;
   walletId: string | null;
   roles: string[];
+  emailConfirmed: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, fullName: string, password: string) => Promise<void>;
+  register: (email: string, fullName: string, password: string) => Promise<any>;
   logout: () => void;
   hydrate: () => void;
   setWalletId: (id: string) => void;
@@ -27,6 +28,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   refreshToken: localStorage.getItem('refreshToken'),
   walletId: null,
   roles: [],
+  emailConfirmed: false,
   isLoading: true,
 
   hydrate: () => {
@@ -46,6 +48,7 @@ export const useAuthStore = create<AuthState>((set) => ({
           accessToken,
           refreshToken,
           roles,
+          emailConfirmed: payload['email_verified'] === 'true' || false, 
           isLoading: false,
         });
       } catch {
@@ -75,19 +78,21 @@ export const useAuthStore = create<AuthState>((set) => ({
         fullName: payload['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name'],
       },
       roles,
+      emailConfirmed: payload['email_verified'] === 'true' || false, 
       walletId: null,   // <-- reset wallet on login
     });
     localStorage.removeItem('walletId');   // clear any leftover wallet ID
   },
 
   register: async (email, fullName, password) => {
-    await apiClient.post('/auth/register', { email, fullName, password });
+    const { data } = await apiClient.post('/auth/register', { email, fullName, password });
+    return data;
   },
 
   logout: () => {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
-    set({ user: null, accessToken: null, refreshToken: null, roles: [], walletId: null });
+    set({ user: null, accessToken: null, refreshToken: null, roles: [], walletId: null, emailConfirmed: false });
   },
 
   setWalletId: (id: string) => {
