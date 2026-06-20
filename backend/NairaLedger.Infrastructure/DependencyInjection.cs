@@ -1,4 +1,20 @@
-﻿namespace NairaLedger.Infrastructure;
+﻿using Hangfire;
+using Hangfire.PostgreSql;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using NairaLedger.Application.Interfaces;
+using NairaLedger.Domain.Interfaces;
+using NairaLedger.Infrastructure.Identity;
+using NairaLedger.Infrastructure.Outbox;
+using NairaLedger.Infrastructure.Persistence;
+using NairaLedger.Infrastructure.Persistence.Repositories;
+using NairaLedger.Infrastructure.Services;
+using StackExchange.Redis;
+using System.Net.Http.Headers;   // for AuthenticationHeaderValue
+
+namespace NairaLedger.Infrastructure;
 
 public static class DependencyInjection
 {
@@ -78,7 +94,7 @@ public static class DependencyInjection
             });
 
             services.AddSingleton<IConnectionMultiplexer>(_ => lazyRedis.Value);
-    }
+        }   // ← this closing brace was missing
 
         // Hangfire
         services.AddHangfire(config =>
@@ -101,7 +117,16 @@ public static class DependencyInjection
         services.AddScoped<ILedgerQueryService, LedgerQueryService>();
         services.AddScoped<ITransactionQueryService, TransactionQueryService>();
         services.AddScoped<IFraudEscalationService, FraudDetectionService>();
-        services.AddScoped<IEmailService, EmailService>();
+
+        // Email – SendGrid API (replaces SMTP)
+        services.AddHttpClient<IEmailService, SendGridApiEmailService>((sp, client) =>
+        {
+            client.BaseAddress = new Uri("https://api.sendgrid.com/v3/");
+            var smtpOptions = sp.GetRequiredService<IOptions<SmtpSettings>>().Value;
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", smtpOptions.Password);
+        });
+
         services.AddScoped<IUserWalletResolver, WalletRepository>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<INotificationService, NotificationService>();
@@ -127,7 +152,7 @@ public static class DependencyInjection
         // Outbox publisher
         services.AddScoped<OutboxPublisherJob>();
 
-        // SMTP
+        // SMTP (SendGrid API doesn't need SmtpSettings, but keep for backward compatibility)
         services.Configure<SmtpSettings>(configuration.GetSection("Smtp"));
         services.AddMemoryCache();
 
