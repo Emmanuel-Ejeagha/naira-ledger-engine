@@ -105,6 +105,7 @@ public static class DependencyInjection
         services.AddScoped<IUserWalletResolver, WalletRepository>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<INotificationService, NotificationService>();
+        services.AddSingleton<IEmailTemplateService, EmailTemplateService>();
 
         // Settings
         services.Configure<PaystackSettings>(configuration.GetSection("Paystack"));
