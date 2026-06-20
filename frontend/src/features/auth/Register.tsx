@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { toast } from 'sonner';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
+import PasswordStrengthMeter from '@/components/PasswordStrengthMeter';
 
 export default function RegisterPage() {
   const navigate = useNavigate();
@@ -22,10 +23,13 @@ export default function RegisterPage() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
   });
+
+  const passwordValue = watch('password', '');
 
   const onSubmit = async (data: RegisterFormData) => {
     setIsSubmitting(true);
@@ -127,6 +131,7 @@ export default function RegisterPage() {
                   {errors.password.message}
                 </p>
               )}
+              <PasswordStrengthMeter password={passwordValue} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">Confirm Password</Label>
