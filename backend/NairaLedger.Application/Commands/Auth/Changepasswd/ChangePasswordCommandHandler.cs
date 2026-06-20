@@ -1,7 +1,4 @@
-﻿using System.Security.Claims;
-using MediatR;
-using Microsoft.AspNetCore.Http;
-using NairaLedger.Application.Interfaces;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace NairaLedger.Application.Commands.Auth;
 
@@ -9,11 +6,15 @@ public class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordComman
 {
     private readonly IUserService _userService;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IEmailService _emailService;
+    private readonly ILogger<ChangePasswordCommandHandler> _logger;
 
-    public ChangePasswordCommandHandler(IUserService userService, IHttpContextAccessor httpContextAccessor)
+    public ChangePasswordCommandHandler(IUserService userService, IHttpContextAccessor httpContextAccessor, IEmailService emailService, ILogger<ChangePasswordCommandHandler> logger)
     {
         _userService = userService;
         _httpContextAccessor = httpContextAccessor;
+        _emailService = emailService;
+        _logger = logger;
     }
 
     public async Task Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
@@ -23,5 +24,13 @@ public class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordComman
             throw new UnauthorizedAccessException();
 
         await _userService.ChangePasswordAsync(userId, request.CurrentPassword, request.NewPassword, cancellationToken);
+
+        try
+        {
+            var user = await _userService.GetByIdAsync(userId, cancellationToken);
+            if (user is not null)
+                await _emailService.SendPasswordChangedEmailAsync(user.Email, user.FullName, cancellationToken);
+        }
+        catch (Exception ex) { _logger.LogWarning(ex, "Failed to send password change email"); }
     }
 }

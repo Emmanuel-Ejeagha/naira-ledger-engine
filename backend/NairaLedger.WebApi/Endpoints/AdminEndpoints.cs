@@ -68,5 +68,42 @@ public static class AdminEndpoints
         .WithSummary("Create a new admin user (Admin only)")
         .Produces(200)
         .Produces(400);
+
+        adminGroup.MapPost("/kyc/approve/{walletId:guid}", async (Guid walletId, NairaLedgerDbContext db, IEmailService emailService, IWalletRepository walletRepo) =>
+        {
+            var wallet = await db.Wallets.FindAsync(walletId);
+            if (wallet is null) return Results.NotFound();
+            wallet.VerifyKyc(KycLevel.Tier2);
+            await db.SaveChangesAsync();
+
+            // Send email
+            try
+            {
+                var ownerInfo = await walletRepo.GetOwnerInfoAsync(walletId);
+                if (ownerInfo is not null)
+                    await emailService.SendKycApprovedEmailAsync(ownerInfo.Email, ownerInfo.FullName, CancellationToken.None);
+            }
+            catch { /* ignore email errors */ }
+
+            return Results.Ok(new { message = "KYC approved" });
+        });
+
+        adminGroup.MapPost("/kyc/reject/{walletId:guid}", async (Guid walletId, NairaLedgerDbContext db, IEmailService emailService, IWalletRepository walletRepo) =>
+        {
+            var wallet = await db.Wallets.FindAsync(walletId);
+            if (wallet is null) return Results.NotFound();
+            wallet.RejectKyc();
+            await db.SaveChangesAsync();
+
+            try
+            {
+                var ownerInfo = await walletRepo.GetOwnerInfoAsync(walletId);
+                if (ownerInfo is not null)
+                    await emailService.SendKycRejectedEmailAsync(ownerInfo.Email, ownerInfo.FullName, "KYC documents not satisfactory.", CancellationToken.None);
+            }
+            catch { }
+
+            return Results.Ok(new { message = "KYC rejected" });
+        });
     }
 }
