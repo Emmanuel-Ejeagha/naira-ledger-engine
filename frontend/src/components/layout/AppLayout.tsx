@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import { useUserWallet } from '../../features/dashboard/hooks/useUserWallet';
+import Footer from './Footer';
 
 export default function AppLayout() {
   useUserWallet();   
@@ -14,6 +15,7 @@ export default function AppLayout() {
         <main className="flex-1 overflow-y-auto p-6 bg-background">
           <Outlet />
         </main>
+        <Footer />
       </div>
     </div>
   );
