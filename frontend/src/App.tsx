@@ -22,6 +22,8 @@ import SignalRProvider from './components/SignalRProvider';
 import VerifyEmailResultPage from './pages/VerifyEmailResult';
 import VerifyEmailSentPage from './pages/VerifyEmailSent';
 import UnverifiedPage from './pages/Unverified';
+import ResetPasswordPage from './pages/ResetPassword';
+import ForgotPasswordPage from './pages/ForgotPassword';
 
 const queryClient = new QueryClient();
 
@@ -35,6 +37,8 @@ export default function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/verify-email-sent" element={<VerifyEmailSentPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/verify-email" element={<VerifyEmailResultPage />} />
             <Route path="/unverified" element={<UnverifiedPage />} />
 
