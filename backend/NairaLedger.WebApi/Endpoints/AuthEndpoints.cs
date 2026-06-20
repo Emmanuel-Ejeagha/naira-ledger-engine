@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
+using NairaLedger.Application.Commands.Auth.ForgotPasswd;
+using NairaLedger.Application.Commands.Auth.ResetPasswd;
 using NairaLedger.Application.Commands.Auth.VerifyEmail;
 
 namespace NairaLedger.WebApi.Endpoints;
@@ -79,5 +81,26 @@ public static class AuthEndpoints
         .Produces(200)
         .ProducesProblem(400)
         .ProducesProblem(429);
+
+        authGroup.MapPost("/forgot-password", async (ForgotPasswordCommand command, IMediator mediator) =>
+        {
+            await mediator.Send(command);
+            return Results.Ok(new { message = "If the email exists, a reset link has been sent." });
+        })
+        .WithSummary("Request password reset")
+        .WithDescription("Sends a password reset email if the email address is registered.")
+        .Produces(200)
+        .RequireRateLimiting("strict");
+
+        authGroup.MapPost("/reset-password", async (ResetPasswordCommand command, IMediator mediator) =>
+        {
+            await mediator.Send(command);
+            return Results.Ok(new { message = "Password has been reset successfully." });
+        })
+        .WithSummary("Reset password")
+        .WithDescription("Resets the user's password using the token sent via email.")
+        .Produces(200)
+        .ProducesProblem(400)
+        .RequireRateLimiting("strict");
     }
 }
