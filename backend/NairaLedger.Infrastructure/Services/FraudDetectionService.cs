@@ -9,12 +9,16 @@ public class FraudDetectionService : IFraudEscalationService
 {
     private readonly NairaLedgerDbContext _context;
     private readonly IMediator _mediator;
+    private readonly IEmailService _emailService;
+    private readonly IWalletRepository _walletRepository;
     private readonly ILogger<FraudDetectionService> _logger;
 
-    public FraudDetectionService(NairaLedgerDbContext context, IMediator mediator, ILogger<FraudDetectionService> logger)
+    public FraudDetectionService(NairaLedgerDbContext context, IMediator mediator, IEmailService emailService, IWalletRepository walletRepository, ILogger<FraudDetectionService> logger)
     {
         _context = context;
         _mediator = mediator;
+        _emailService = emailService;
+        _walletRepository = walletRepository;
         _logger = logger;
     }
 
@@ -29,6 +33,19 @@ public class FraudDetectionService : IFraudEscalationService
             if (wallet is not null && wallet.IsActive)
             {
                 wallet.Deactivate();
+                // After wallet.Deactivate(); and saving
+                try
+                {
+                    var ownerInfo = await _walletRepository.GetOwnerInfoAsync(walletId, cancellationToken);
+                    if (ownerInfo is not null)
+                    {
+                        await _emailService.SendWalletFrozenEmailAsync(ownerInfo.Email, ownerInfo.FullName, ruleName, cancellationToken);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Failed to send frozen email for wallet {WalletId}", walletId);
+                }
                 _context.Wallets.Update(wallet);
                 await _context.SaveChangesAsync(cancellationToken);
                 _logger.LogCritical("Wallet {WalletId} automatically frozen due to fraud rule {Rule}", walletId, ruleName);

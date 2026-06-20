@@ -9,6 +9,7 @@ public class FundWalletCommandHandler : IRequestHandler<FundWalletCommand, FundW
     private readonly ITransactionRepository _transactionRepository;
     private readonly IUnitOfWork _unitOfWork;
     private readonly INotificationService _notificationService;
+    private readonly IEmailService _emailService;
     private readonly ILogger<FundWalletCommandHandler> _logger;
 
     public FundWalletCommandHandler(
@@ -16,12 +17,14 @@ public class FundWalletCommandHandler : IRequestHandler<FundWalletCommand, FundW
         ITransactionRepository transactionRepository,
         IUnitOfWork unitOfWork,
         INotificationService notificationService,
+        IEmailService emailService,
         ILogger<FundWalletCommandHandler> logger)
     {
         _walletRepository = walletRepository;
         _transactionRepository = transactionRepository;
         _unitOfWork = unitOfWork;
         _notificationService = notificationService;
+        _emailService = emailService;
         _logger = logger;
     }
 
@@ -51,6 +54,19 @@ public class FundWalletCommandHandler : IRequestHandler<FundWalletCommand, FundW
             await _transactionRepository.AddAsync(transaction, cancellationToken);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             await _unitOfWork.CommitTransactionAsync(cancellationToken);
+            // In the Handle method, after CommitTransactionAsync:
+            try
+            {                
+                var ownerInfo = await _walletRepository.GetOwnerInfoAsync(wallet.Id, cancellationToken);
+                if (ownerInfo is not null)
+                {
+                    await _emailService.SendWalletFundedEmailAsync(ownerInfo.Email, ownerInfo.FullName, request.Amount, cancellationToken);
+                }               
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to send funding email for wallet {WalletId}", request.WalletId);
+            }
             await _notificationService.SendToUserAsync(wallet.UserId.Value, $"Your wallet has been credited with NGN {request.Amount:N2}.", cancellationToken);
 
             _logger.LogInformation(

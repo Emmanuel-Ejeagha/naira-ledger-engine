@@ -1,20 +1,16 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
 
-export default function AdminRoute({ children }: { children: React.ReactNode  }) {
+export default function AdminRoute() {
   const { user, roles, isLoading } = useAuthStore();
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-neutral">Loading...</p>
-      </div>
-    );
+    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
   }
 
   if (!user || !roles.includes('Admin')) {
     return <Navigate to="/dashboard" replace />;
   }
 
-  return children;
+  return <Outlet />;
 }
