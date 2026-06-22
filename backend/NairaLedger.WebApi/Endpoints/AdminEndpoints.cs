@@ -21,7 +21,7 @@ public static class AdminEndpoints
                 .Where(w => w.KycLevel == KycLevel.Tier1)
                 .Select(w => new {
                     w.Id,
-                    w.UserId,
+                    w.UserId.Value,
                     Tag = w.Tag != null ? w.Tag.Value : null,
                     w.KycLevel,
                     w.CreatedAt,
