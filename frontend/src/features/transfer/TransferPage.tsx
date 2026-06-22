@@ -13,7 +13,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import { CheckCircle, ArrowLeftRight } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
-import { useWalletBalance } from '../dashboard/hooks/useDashboard';
+import { useWalletBalance } from '@/hooks/useDashboard';
 
 type Step = 'form' | 'confirm' | 'receipt';
 type TransferFormDataWithKey = TransferFormData & { idempotencyKey?: string };

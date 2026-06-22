@@ -1,7 +1,7 @@
 import { useAuthStore } from '@/stores/authStore';
 import BalanceCard from './components/BalanceCard';
 import RecentTransactions from './components/RecentTransactions';
-import { useRecentTransactions, useWalletBalance } from './hooks/useDashboard';
+import { useRecentTransactions, useWalletBalance } from '@/hooks/useDashboard';
 
 export default function DashboardPage() {
   const { user } = useAuthStore();
