@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
 import { useSidebarStore } from '@/stores/sidebarStore';
@@ -30,8 +30,9 @@ export default function MobileSidebar() {
   const isAdmin = useAuthStore((s) => s.roles.includes('Admin'));
   const { isMobileOpen, closeMobile } = useSidebarStore();
   const allLinks = [...links, ...(isAdmin ? adminLinks : [])];
+  const drawerRef = useRef<HTMLElement>(null);
 
-  // Close on Escape key
+  // Close on Escape key + disable background scroll
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') closeMobile();
@@ -50,26 +51,33 @@ export default function MobileSidebar() {
 
   return (
     <div className="fixed inset-0 z-50 md:hidden">
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/50" onClick={closeMobile} />
+      {/* Overlay – catches clicks outside the drawer */}
+      <div
+        className="absolute inset-0 bg-black/50 z-40"
+        onClick={closeMobile}
+      />
 
       {/* Drawer */}
       <aside
-        className="…"
-        role="dialog"
-        aria-modal="true"
-        aria-label="Mobile navigation"
-      >        
-      {/* Header */}
+        ref={drawerRef}
+        className="absolute left-0 top-0 bottom-0 w-60 bg-primary text-white flex flex-col p-4 z-50"
+      >
+        {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <span className="text-xl font-bold">NairaLedger</span>
-          <Button variant="ghost" size="icon" className="text-white hover:bg-white/10" onClick={closeMobile} aria-label="Close menu">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="text-white hover:bg-white/10"
+            onClick={closeMobile}
+            aria-label="Close menu"
+          >
             <X className="h-5 w-5" />
           </Button>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 space-y-1">
+        <nav className="flex-1 space-y-1" role="navigation" aria-label="Mobile navigation">
           {allLinks.map((link) => (
             <NavLink
               key={link.to}
@@ -91,7 +99,10 @@ export default function MobileSidebar() {
         <Button
           variant="ghost"
           className="text-white hover:bg-white/10 justify-start gap-3 mt-4"
-          onClick={() => { logout(); closeMobile(); }}
+          onClick={() => {
+            logout();
+            closeMobile();
+          }}
         >
           <LogOut className="h-4 w-4" />
           Logout

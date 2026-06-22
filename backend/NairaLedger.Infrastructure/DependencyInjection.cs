@@ -118,7 +118,7 @@ public static class DependencyInjection
         services.AddScoped<ITransactionQueryService, TransactionQueryService>();
         services.AddScoped<IFraudEscalationService, FraudDetectionService>();
 
-        // Email – SendGrid API (replaces SMTP)
+        //Email – SendGrid API(replaces SMTP)
         services.AddHttpClient<IEmailService, SendGridApiEmailService>((sp, client) =>
         {
             client.BaseAddress = new Uri("https://api.sendgrid.com/v3/");
@@ -131,6 +131,7 @@ public static class DependencyInjection
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<INotificationService, NotificationService>();
         services.AddSingleton<IEmailTemplateService, EmailTemplateService>();
+        //services.AddScoped<IEmailService, EmailService>();
 
         // Settings
         services.Configure<PaystackSettings>(configuration.GetSection("Paystack"));

@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from 'sonner';
 
 export default function CreateAdminPage() {
-  const { register, handleSubmit, formState: { errors }, reset } = useForm();
+  const { register, handleSubmit, reset } = useForm();
   const mutation = useMutation({
     mutationFn: (data: any) => apiClient.post('/admin/users/create-admin', data),
     onSuccess: () => {

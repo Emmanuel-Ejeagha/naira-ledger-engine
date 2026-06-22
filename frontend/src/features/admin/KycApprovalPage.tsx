@@ -70,7 +70,9 @@ export default function KycApprovalPage() {
               {wallets?.map((wallet) => (
                 <tr key={wallet.id} className="border-b border-border hover:bg-muted/50">
                   <td className="py-3 px-4 font-mono text-xs">{wallet.id}</td>
-                  <td className="py-3 px-4">{wallet.userId}</td>
+                  <td className="py-3 px-4">
+                    {typeof wallet.userId === 'object' ? (wallet.userId as any).value : wallet.userId}
+                </td>
                   <td className="py-3 px-4">{wallet.tag ?? '—'}</td>
                   <td className="py-3 px-4">{wallet.kycFullName ?? '—'}</td>
                   <td className="py-3 px-4">{wallet.kycIdNumber ?? '—'}</td>
