@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Copy, Check } from 'lucide-react';
 import { toast } from 'sonner';
-import { useWalletBalance } from '../dashboard/hooks/useDashboard';
+import { useWalletBalance } from '@/hooks/useDashboard';
 
 const kycLabels: Record<string, string> = {
   '0': 'Unverified',

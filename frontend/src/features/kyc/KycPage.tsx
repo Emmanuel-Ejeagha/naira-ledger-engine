@@ -23,7 +23,7 @@ const kycFormSchema = z.object({
 type KycFormData = z.infer<typeof kycFormSchema>;
 
 export default function KycPage() {
-  const walletId = localStorage.getItem('walletId') || '';
+  const walletId = useAuthStore((s) => s.walletId) || '';
   const accessToken = useAuthStore((s) => s.accessToken);
   const queryClient = useQueryClient();
 
