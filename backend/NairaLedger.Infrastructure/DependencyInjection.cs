@@ -118,20 +118,20 @@ public static class DependencyInjection
         services.AddScoped<ITransactionQueryService, TransactionQueryService>();
         services.AddScoped<IFraudEscalationService, FraudDetectionService>();
 
-        // Email – SendGrid API (replaces SMTP)
-        //services.AddHttpClient<IEmailService, SendGridApiEmailService>((sp, client) =>
-        //{
-        //    client.BaseAddress = new Uri("https://api.sendgrid.com/v3/");
-        //    var smtpOptions = sp.GetRequiredService<IOptions<SmtpSettings>>().Value;
-        //    client.DefaultRequestHeaders.Authorization =
-        //        new AuthenticationHeaderValue("Bearer", smtpOptions.Password);
-        //});
+        //Email – SendGrid API(replaces SMTP)
+        services.AddHttpClient<IEmailService, SendGridApiEmailService>((sp, client) =>
+        {
+            client.BaseAddress = new Uri("https://api.sendgrid.com/v3/");
+            var smtpOptions = sp.GetRequiredService<IOptions<SmtpSettings>>().Value;
+            client.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", smtpOptions.Password);
+        });
 
         services.AddScoped<IUserWalletResolver, WalletRepository>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<INotificationService, NotificationService>();
         services.AddSingleton<IEmailTemplateService, EmailTemplateService>();
-        services.AddScoped<IEmailService, EmailService>();
+        //services.AddScoped<IEmailService, EmailService>();
 
         // Settings
         services.Configure<PaystackSettings>(configuration.GetSection("Paystack"));
