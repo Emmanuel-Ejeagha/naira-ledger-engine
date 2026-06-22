@@ -127,11 +127,10 @@ public static class DependencyInjection
         //        new AuthenticationHeaderValue("Bearer", smtpOptions.Password);
         //});
 
-        //services.AddScoped<IUserWalletResolver, WalletRepository>();
-        //services.AddScoped<IUserService, UserService>();
-        //services.AddScoped<INotificationService, NotificationService>();
-        //services.AddSingleton<IEmailTemplateService, EmailTemplateService>();
-
+        services.AddScoped<IUserWalletResolver, WalletRepository>();
+        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<INotificationService, NotificationService>();
+        services.AddSingleton<IEmailTemplateService, EmailTemplateService>();
         services.AddScoped<IEmailService, EmailService>();
 
         // Settings
